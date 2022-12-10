@@ -1,3 +1,18 @@
+/**
+   Copyright 2022 Floating Ocean
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 #include "collect/Collection.h"
 
 //-----版本控制-----
@@ -31,6 +46,13 @@ int main(int argc, char **argv) {
     if (argc != 2 || strcmp(argv[1], "/openConhost") != 0 != 0) {
         system("title Tetris Loader");
         printf("Please Wait . . .");
+        if(!checkFont()){
+            system("cls");
+            SetConsoleOutputCP(65001);
+            printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
+            system("pause > nul");
+            return 0;
+        }
         Sleep(500);
         char command[350] = "start conhost ";
         strcat(command, argv[0]);
@@ -39,7 +61,7 @@ int main(int argc, char **argv) {
         system("exit");
         return 0;
     }
-    initializeConsole();
+    if(!initializeConsole()) return 0;
     initializeBlock();
     system("mode con cols=50 lines=34");
     PlaceWindowCentral();
@@ -50,7 +72,7 @@ int main(int argc, char **argv) {
            "               Version %s\n\n\n\n"
            "          Copyright ©2022 Floating Ocean.\n"
            "                All Rights Reserved.", versionNameFull);
-    system("pause > nul & cls & mode con cols=75 lines=30");
+    system("pause > nul & cls & mode con cols=75 lines=28");
     PlaceWindowCentral();
     refreshTitleState("Welcome");
     char greeting[50], userName[MAX_PATH];
@@ -66,9 +88,9 @@ int main(int argc, char **argv) {
            "    4.在界面左右侧进度柱进度归零前未消行，将会按照游戏难度进行惩罚.\n"
            "    5.在传统俄罗斯方块游戏中能做到的，这里应该都可以做到.\n\n"
            "    更多游戏介绍请移步 floating-ocean.github.io/tetrisproj/ \n\n\n"
-           "    Windows11以下系统需要安装 Cascadia Mono 字体.\n\n\n"
            "    点按键盘任意键继续.\n\n\n\n"
-           "    ©2022 Floating Ocean.", greeting, userName);
+           "    ©2022 Floating Ocean.\n"
+           "    All Rights Reserved.", greeting, userName);
     system("pause>nul & cls");
     startGame();
 }

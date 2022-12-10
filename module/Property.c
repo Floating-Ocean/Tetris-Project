@@ -1,3 +1,18 @@
+/**
+   Copyright 2022 Floating Ocean
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 #include "../collect/Collection.h"
 
 //三个难度
@@ -13,13 +28,13 @@ GameMode currentGameMode;
  */
 void printOne(int index, int textColor, int borderColor, char **text) {
     AwaitSettingTextInPosition(5, 5 + index * 8, borderColor);
-    for (int i = 0; i < 69; i++) printf("■");
+    for (int i = 0; i < 36; i++) printf("■");
     for (int i = 0; i < 4; i++) {
         MoveCursor(5, 6 + index * 8 + i);
         for (int j = 0; j < 39; j++) printf("  ");
     }
     MoveCursor(5, 10 + index * 8);
-    for (int i = 0; i < 69; i++) printf("■");
+    for (int i = 0; i < 36; i++) printf("■");
     AwaitSettingTextInPosition(8, 7 + index * 8, textColor);
     printf("%s", text[0]);
     MoveCursor(8, 8 + index * 8);
@@ -58,7 +73,7 @@ void noticeChallengeEnable(){
     PlaceWindowCentral();
     refreshTitleState("Challenge Mode Notification");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 10 + 3);
-    MoveCursor(30, 4);
+    MoveCursor(29, 4);
     printf(" — Challenge Mode Enabled — ");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
     MoveCursor(24, 10);
@@ -72,9 +87,9 @@ void noticeChallengeEnable(){
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 10 + 3);
     MoveCursor(55, 10);
     printf("游戏失败");
-    MoveCursor(38, 14);
+    MoveCursor(36, 14);
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    printf("按任意键继续");
+    printf("按 任 意 键 继 续");
     system("pause > nul");
     challengeModeEnabled = true;
     showSelectView();
@@ -84,7 +99,7 @@ void noticeChallengeEnable(){
  * 显示选择页并处理交互
  */
 void showSelectView() {
-    system("cls & mode con cols=80 lines=29");
+    system("cls & mode con cols=82 lines=29");
     PlaceWindowCentral();
     refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
@@ -187,7 +202,7 @@ void showSelectView() {
 }
 
 void showBeyondSelectView() {
-    system("cls & mode con cols=80 lines=37");
+    system("cls & mode con cols=82 lines=37");
     PlaceWindowCentral();
     refreshTitleState("Inner Mode Choosing    Challenge Mode");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);

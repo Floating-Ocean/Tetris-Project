@@ -1,3 +1,18 @@
+/**
+   Copyright 2022 Floating Ocean
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 #include "../collect/Collection.h"
 
 /**
@@ -115,30 +130,30 @@ void initializeSavedBlock() {
 void initializeMap() {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 9 + 3);
     printf("\n\n    ");
-    for (int i = 0; i < 9; i++) printf("■ "); //left
+    for (int i = 0; i < 9; i++) printf("■"); //left
     printf("  ");
-    for (int i = 0; i < N + 2; i++) printf("■ "); //mid
+    for (int i = 0; i < N + 2; i++) printf("■"); //mid
     printf("  ");
-    for (int i = 0; i < 9; i++) printf("■ "); //right
+    for (int i = 0; i < 9; i++) printf("■"); //right
     printf("\n    ");
     for (int i = 0; i < N; i++) {
         printf(i == 14 ? "  " : "■");
-        for (int j = 0; j < 7; j++) printf(i == 13 || i == 15 ? " ■" : "  ");
-        printf(i == 14 ? "    ■" : " ■   ■");
+        for (int j = 0; j < 7; j++) printf(i == 13 || i == 15 ? "■" : "  ");
+        printf(i == 14 ? "    ■" : "■  ■");
         for (int j = 0; j < N; j++) {
             currentMap[i][j].color = 7;
             currentMap[i][j].state = 0;
             printf("  ");
         }
-        printf(i == 11 ? " ■   " : " ■   ■");
-        for (int j = 0; j < 7; j++) printf(i == 10 || i == 12 ? " ■" : "  ");
-        printf(i == 11 ? "   \n    " : " ■ \n    ");
+        printf(i == 11 ? "■" : "■  ■");
+        for (int j = 0; j < 7; j++) printf(i == 10 || i == 12 ? "■" : "  ");
+        printf(i == 11 ? "   \n    " : "■\n    ");
     }
-    for (int i = 0; i < 9; i++) printf("■ ");
+    for (int i = 0; i < 9; i++) printf("■");
     printf("  ");
-    for (int i = 0; i < N + 2; i++) printf("■ ");
+    for (int i = 0; i < N + 2; i++) printf("■");
     printf("  ");
-    for (int i = 0; i < 9; i++) printf("■ ");
+    for (int i = 0; i < 9; i++) printf("■");
     printf("\n  ");
     initializeScore(); //初始化分数ui
     initializeSavedBlock(); //初始化保存方块ui
@@ -297,7 +312,7 @@ void extractNextBlock() {
     for (int i = 0; i < 4; i++) {
         MoveCursor(84, 7 + i);
         for (int j = 0; j < 4; j++) {
-            printf(blocks[nextBlock].data[nextRotate][i][j] ? "■ " : "  ");
+            printf(blocks[nextBlock].data[nextRotate][i][j] ? "■" : "  ");
         }
     }
 }
@@ -573,7 +588,7 @@ void showSavedBlock() {
     for (int i = 0; i < 4; i++) {
         MoveCursor(84, 21 + i);
         for (int j = 0; j < 4; j++) {
-            printf(blocks[savedBlock].data[savedRotate][i][j] ? "■ " : "  ");
+            printf(blocks[savedBlock].data[savedRotate][i][j] ? "■" : "  ");
         }
     }
 }

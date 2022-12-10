@@ -1,3 +1,18 @@
+/**
+   Copyright 2022 Floating Ocean
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 #include "../collect/Collection.h"
 
 /**
@@ -62,9 +77,9 @@ void showGreetings() {
                              "创死凡人！", "咋这么难搞", "啊啊啊啊啊", "俄罗斯方块啊", "不存白不存", "这里是那里", "25 Kill！", "方可超越未知",
                              "GitHub？", "格子间距真宽", "一瞬间就崩力", "叠罗汉呢??", "旋转四分钟~"};
     int index = randBetween(0, 33);
-    SetTextInPosition(greetings01[index], 7, 20, 7);
-    SetTextInPosition(greetings02[index], 7, 22, 7);
-    SetTextInPosition("From Ocean", 7, 25, 8);
+    SetTextInPosition(greetings01[index], 8, 20, 7);
+    SetTextInPosition(greetings02[index], 8, 22, 7);
+    SetTextInPosition("From Ocean", 8, 25, 8);
 }
 
 /**

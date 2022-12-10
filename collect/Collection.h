@@ -1,3 +1,18 @@
+/**
+   Copyright 2022 Floating Ocean
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 #include "Structs.h"
 
 #ifndef TETRIS_METHODS_H
@@ -102,7 +117,7 @@ extern void AwaitSettingTextInPosition(int x, int y, int color);
 
 extern void SetTextInPosition(char *text, int x, int y, int color);
 
-extern void initializeFont();
+extern bool initializeFont();
 
 extern void initializeColor();
 
@@ -112,7 +127,7 @@ extern void PlaceWindowCentral();
 
 extern void refreshTitleState(char *state);
 
-extern void initializeConsole();
+extern bool initializeConsole();
 
 //文件操作 File.c
 extern void checkFolder();
@@ -160,3 +175,6 @@ extern void getCurrentGreeting(char *greet);
 extern void *timeThread(void *args);
 
 extern bool whenBreakTimer(); //abstract -> Game.c
+
+//字体 Font.c
+extern bool checkFont();

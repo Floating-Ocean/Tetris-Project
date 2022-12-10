@@ -1,3 +1,18 @@
+/**
+   Copyright 2022 Floating Ocean
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 #include "../collect/Collection.h"
 
 /**
@@ -47,7 +62,14 @@ void SetTextInPosition(char *text, int x, int y, int color) {
 /**
  * 初始化控制台自定义字体
  */
-void initializeFont() {
+bool initializeFont() {
+    if(!checkFont()){
+        PlaceWindowCentral();
+        refreshTitleState("");
+        printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
+        system("pause > nul");
+        return false;
+    }
     CONSOLE_FONT_INFOEX cfi;
     cfi.cbSize = sizeof cfi;
     cfi.nFont = 0;
@@ -55,8 +77,9 @@ void initializeFont() {
     cfi.dwFontSize.Y = 20;  //设置字体大小
     cfi.FontFamily = FF_DONTCARE;
     cfi.FontWeight = FW_NORMAL; //字体粗细 FW_BOLD
-    wcscpy_s(cfi.FaceName, 32, L"Cascadia Mono");  //设置字体，必须是控制台已有的，安装了Windows Terminal的设备自带字体Cascadia Mono
+    wcscpy_s(cfi.FaceName, 32, L"Sarasa Mono SC");  //设置字体，必须是控制台已有的，安装了Windows Terminal的设备自带字体Cascadia Mono
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+    return true;
 }
 
 /**
@@ -141,11 +164,12 @@ void refreshTitleState(char *state) {
 /**
  * 初始化控制台，包括字符集，标题等等
  */
-void initializeConsole() {
+bool initializeConsole() {
     system("color 0A");
     SetConsoleOutputCP(65001);
-    DisableFeatures();
     initializeColor();
-    initializeFont();
+    if(!initializeFont()) return false;
+    DisableFeatures();
     HideCursor();
+    return true;
 }
