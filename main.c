@@ -137,7 +137,7 @@ void showWelcomePage(){
            "    点按键盘任意键继续.\n\n\n\n"
            "    ©2022 Floating Ocean.\n"
            "    All Rights Reserved.", greeting, userName);
-    while (true) //等待按esc或继续
+    while (true) //等待按esc或继续游戏
         if (kbhit()) {
             int input = getch();
             if(input == 27) {

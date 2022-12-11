@@ -30,10 +30,12 @@ bool importCustomTheme(char *file) {
         return false;
     }
     //step2.读文件
+    //文件信息
     char title[50], description[250], publisher[100];
     GetPrivateProfileString("ThemeIntro", "Title", "No Title", title, sizeof title, file);
     GetPrivateProfileString("ThemeIntro", "Description", "No Description.", description, sizeof description, file);
     GetPrivateProfileString("ThemeIntro", "Publisher", "©? Nameless", publisher, sizeof publisher, file);
+    //主题配置
     char *tags[14] = {"BackgroundColor", "ForegroundStrongColor",
                       "ForegroundModestColor", "ForegroundMildColor", "PassColor", "WarningColor", "FaultColor",
                       "BlockColor_0", "BlockColor_1", "BlockColor_2", "BlockColor_3", "BlockColor_4", "BlockColor_5", "BlockColor_6"};
