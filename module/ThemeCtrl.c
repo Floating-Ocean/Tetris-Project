@@ -30,6 +30,10 @@ bool importCustomTheme(char *file) {
         return false;
     }
     //step2.读文件
+    char title[50], description[250], publisher[100];
+    GetPrivateProfileString("ThemeIntro", "Title", "No Title", title, sizeof title, file);
+    GetPrivateProfileString("ThemeIntro", "Description", "No Description.", description, sizeof description, file);
+    GetPrivateProfileString("ThemeIntro", "Publisher", "©? Nameless", publisher, sizeof publisher, file);
     char *tags[14] = {"BackgroundColor", "ForegroundStrongColor",
                       "ForegroundModestColor", "ForegroundMildColor", "PassColor", "WarningColor", "FaultColor",
                       "BlockColor_0", "BlockColor_1", "BlockColor_2", "BlockColor_3", "BlockColor_4", "BlockColor_5", "BlockColor_6"};
@@ -41,6 +45,14 @@ bool importCustomTheme(char *file) {
             return false;
         }
     }
+    printf("\n  你正在导入主题...\n\n\n  %s\n\n  %s\n\n  Published by %s\n\n\n  任意键导入主题.\n\n  若你不需要此主题，请按下键盘的Esc键以取消.", title, description, publisher);
+    while (true) //等待按esc或继续
+        if (kbhit()) {
+            int input = getch();
+            if(input == 27) {
+                return false; //按esc返回开始页
+            }else break;
+        }
     insertDB("TetrisSetting", "ImportedTheme", true);
     for(int i=0;i<14;i++) WritePrivateProfileString("TetrisCustomTheme", tags[i], fetched[i], getFileName());
     return true;

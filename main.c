@@ -61,7 +61,7 @@ bool checkEnvironment(int argumentCount){
     SetConsoleOutputCP(65001);
     if (argumentCount != 2 || strcmp(inputArgument[1], "/openConhost") != 0) {
         if(argumentCount == 2){
-            if(importCustomTheme(inputArgument[1])) printf("\n  主题导入成功，可在下次打开游戏时切换.");
+            if(importCustomTheme(inputArgument[1])) printf("\n\n\n  主题导入成功，可在下次打开游戏时切换.");
             system("pause > nul");
             return false;
         }
