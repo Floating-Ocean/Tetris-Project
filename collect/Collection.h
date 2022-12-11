@@ -180,6 +180,10 @@ extern void shuffleIntArray(int *array, int n);
 
 extern void getCurrentGreeting(char *greet);
 
+extern int hexToDec(char hex);
+
+extern COLORREF hexToRGB(char* hex);
+
 //计时器 Timer.c
 extern void *timeThread(void *args);
 
@@ -187,3 +191,6 @@ extern bool whenBreakTimer(); //abstract -> Game.c
 
 //字体 Font.c
 extern bool checkFont();
+
+//主题控制 ThemeCtrl.c
+extern bool importCustomTheme(char *file);

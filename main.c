@@ -51,14 +51,24 @@ int main(int argc, char **argv) {
     showStartPage();
 }
 
+/**
+ * 检查是否从conhost打开，处理拖拽进入的主题文件的导入
+ * @param argumentCount 命令行参数数量
+ * @return 是否继续游戏
+ */
 bool checkEnvironment(int argumentCount){
     //强行从conhost打开,Windows Terminal的可玩度太低了
+    SetConsoleOutputCP(65001);
     if (argumentCount != 2 || strcmp(inputArgument[1], "/openConhost") != 0) {
+        if(argumentCount == 2){
+            if(importCustomTheme(inputArgument[1])) printf("\n  主题导入成功，可在下次打开游戏时切换.");
+            system("pause > nul");
+            return false;
+        }
         system("title Tetris Loader");
-        printf("Please Wait . . .");
+        printf("\n  Please Wait . . .");
         if(!checkFont()){
             system("cls");
-            SetConsoleOutputCP(65001);
             printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
             system("pause > nul");
             return false;
@@ -73,6 +83,9 @@ bool checkEnvironment(int argumentCount){
     return true;
 }
 
+/**
+ * 显示最初的开始页
+ */
 void showStartPage(){
     system("cls & mode con cols=50 lines=34");
     PlaceWindowCentral();
@@ -87,7 +100,9 @@ void showStartPage(){
         if (kbhit()) {
             int input = getch();
             if (input == 116) { //T键切换主题
-                insertDB("TetrisSetting", "LightTheme", !queryDB("TetrisSetting", "LightTheme"));
+                int themeRange = queryDB("TetrisSetting", "ImportedTheme") ? 2 : 1, oldTheme = queryDB("TetrisSetting", "ThemeType"),
+                    newTheme = oldTheme + 1 > themeRange ? 0 : oldTheme + 1;
+                insertDB("TetrisSetting", "ThemeType",  newTheme > themeRange ? themeRange : newTheme);
                 char command[350] = "start conhost ";
                 strcat(command, inputArgument[0]);
                 strcat(command, " /openConhost");
@@ -99,6 +114,9 @@ void showStartPage(){
     showWelcomePage();
 }
 
+/**
+ * 显示欢迎页
+ */
 void showWelcomePage(){
     system("cls & mode con cols=75 lines=28");
     PlaceWindowCentral();

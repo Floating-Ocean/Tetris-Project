@@ -53,3 +53,23 @@ void getCurrentGreeting(char *greet){
     else if(hour >= 17 && hour <= 23) strcpy(greet, "晚上好");
     else strcpy(greet, "早点睡");
 }
+
+/**
+ * 一位十六进制转十进制
+ * @param hex
+ * @return
+ */
+int hexToDec(char hex){
+    return (hex >= '0' && hex <= '9') ? hex - '0' : ((hex >= 'A' && hex <= 'Z') ? hex - 'A' + 10 : hex - 'a' + 10);
+}
+
+/**
+ * 将hex颜色转换为rgb表达式
+ * @param hex 形如0xffffff和#ffffff的颜色
+ * @return rgb色值
+ */
+COLORREF hexToRGB(char* hex){
+    int size = strlen(hex) == 7 ? 7 : 8; //支持0xffffff和#ffffff
+    return RGB(hexToDec(hex[size - 6]) * 16 + hexToDec(hex[size - 5]),
+               hexToDec(hex[size - 4]) * 16 + hexToDec(hex[size - 3]), hexToDec(hex[size - 2]) * 16 + hexToDec(hex[size - 1]));
+}
