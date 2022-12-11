@@ -1,18 +1,19 @@
-/**
-   Copyright 2022 Floating Ocean
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+/*
+ * Copyright (C) 2022 Floating Ocean
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 #include "collect/Collection.h"
 
 //-----版本控制-----
@@ -36,14 +37,23 @@ double speedMultiply = 1.0;
 bool enablePreview = false, hidePreviewTemporarily = false, challengeModeEnabled = false, beyondEnabled = false;
 bool forceEndGame = false;
 DWORD speedMultiplyEnabledTime;
+char **inputArgument;
 
 /**
  * 主函数
  * @return 0
  */
 int main(int argc, char **argv) {
+    inputArgument = argv;
+    if(!checkEnvironment(argc)) return 0;
+    if(!initializeConsole()) return 0;
+    initializeBlock();
+    showStartPage();
+}
+
+bool checkEnvironment(int argumentCount){
     //强行从conhost打开,Windows Terminal的可玩度太低了
-    if (argc != 2 || strcmp(argv[1], "/openConhost") != 0 != 0) {
+    if (argumentCount != 2 || strcmp(inputArgument[1], "/openConhost") != 0) {
         system("title Tetris Loader");
         printf("Please Wait . . .");
         if(!checkFont()){
@@ -51,19 +61,20 @@ int main(int argc, char **argv) {
             SetConsoleOutputCP(65001);
             printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
             system("pause > nul");
-            return 0;
+            return false;
         }
         Sleep(500);
         char command[350] = "start conhost ";
-        strcat(command, argv[0]);
+        strcat(command, inputArgument[0]);
         strcat(command, " /openConhost");
         system(command);
-        system("exit");
-        return 0;
+        return false;
     }
-    if(!initializeConsole()) return 0;
-    initializeBlock();
-    system("mode con cols=50 lines=34");
+    return true;
+}
+
+void showStartPage(){
+    system("cls & mode con cols=50 lines=34");
     PlaceWindowCentral();
     refreshTitleState("");
     printf("\n\n\n\n           俄罗斯方块 - Tetris Project\n\n\n"
@@ -72,7 +83,24 @@ int main(int argc, char **argv) {
            "               Version %s\n\n\n\n"
            "          Copyright ©2022 Floating Ocean.\n"
            "                All Rights Reserved.", versionNameFull);
-    system("pause > nul & cls & mode con cols=75 lines=28");
+    while (true) //等待切换主题重开
+        if (kbhit()) {
+            int input = getch();
+            if (input == 116) { //T键切换主题
+                insertDB("TetrisSetting", "LightTheme", !queryDB("TetrisSetting", "LightTheme"));
+                char command[350] = "start conhost ";
+                strcat(command, inputArgument[0]);
+                strcat(command, " /openConhost");
+                system(command);
+                return;
+            }else if(input == 27) return; //按esc退出游戏
+            else break;
+        }
+    showWelcomePage();
+}
+
+void showWelcomePage(){
+    system("cls & mode con cols=75 lines=28");
     PlaceWindowCentral();
     refreshTitleState("Welcome");
     char greeting[50], userName[MAX_PATH];
@@ -91,6 +119,14 @@ int main(int argc, char **argv) {
            "    点按键盘任意键继续.\n\n\n\n"
            "    ©2022 Floating Ocean.\n"
            "    All Rights Reserved.", greeting, userName);
-    system("pause>nul & cls");
+    while (true) //等待按esc或继续
+        if (kbhit()) {
+            int input = getch();
+            if(input == 27) {
+                showStartPage();
+                return; //按esc返回开始页
+            }else break;
+        }
+    system("cls");
     startGame();
 }

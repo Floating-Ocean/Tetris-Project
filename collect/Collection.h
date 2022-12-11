@@ -1,18 +1,19 @@
-/**
-   Copyright 2022 Floating Ocean
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+/*
+ * Copyright (C) 2022 Floating Ocean
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 #include "Structs.h"
 
 #ifndef TETRIS_METHODS_H
@@ -44,6 +45,14 @@ extern double speedMultiply;
 extern bool enablePreview, hidePreviewTemporarily, challengeModeEnabled, beyondEnabled;
 extern bool forceEndGame;
 extern DWORD speedMultiplyEnabledTime;
+extern char **inputArgument;
+
+//主页面 main.c
+extern bool checkEnvironment(int argumentCount);
+
+extern void showStartPage();
+
+extern void showWelcomePage();
 
 //方块 Block.c
 extern void setInData(int d[7][4][4][4]);
@@ -154,9 +163,9 @@ extern void recoverTitle();
 
 extern void noticeChallengeEnable();
 
-extern void showSelectView();
+extern bool showSelectView();
 
-extern void showBeyondSelectView();
+extern bool showBeyondSelectView();
 
 extern int calculateLevel();
 

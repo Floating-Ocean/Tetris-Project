@@ -1,18 +1,19 @@
-/**
-   Copyright 2022 Floating Ocean
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+/*
+ * Copyright (C) 2022 Floating Ocean
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 #include "../collect/Collection.h"
 
 //三个难度
@@ -98,7 +99,7 @@ void noticeChallengeEnable(){
 /**
  * 显示选择页并处理交互
  */
-void showSelectView() {
+bool showSelectView() {
     system("cls & mode con cols=82 lines=29");
     PlaceWindowCentral();
     refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
@@ -117,7 +118,10 @@ void showSelectView() {
     while (!confirm) { //未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
-            if(input == 224) continue;
+            if(input == 27){
+                showWelcomePage();
+                return false;
+            }else if(input == 224) continue;
             if(!challengeModeEnabled) { //读取输入challenge回车
                 if (challengeInput[++currentChallengeInputIndex] == input) {
                     if (currentChallengeInputIndex == 9) {
@@ -128,8 +132,7 @@ void showSelectView() {
             }else{
                 if (beyondInput[++currentBeyondInputIndex] == input) {
                     if (currentBeyondInputIndex == 17) {
-                        showBeyondSelectView();
-                        break;
+                        return showBeyondSelectView();
                     }
                 } else currentBeyondInputIndex = -1;
             }
@@ -199,9 +202,10 @@ void showSelectView() {
             }
         }
     }
+    return true;
 }
 
-void showBeyondSelectView() {
+bool showBeyondSelectView() {
     system("cls & mode con cols=82 lines=37");
     PlaceWindowCentral();
     refreshTitleState("Inner Mode Choosing    Challenge Mode");
@@ -220,6 +224,10 @@ void showBeyondSelectView() {
     while (!confirm) { //未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
+            if(input == 27){
+                showWelcomePage();
+                return false;
+            }
             //做一个方向键循环选择
             if (input == 72 || input == 75) { //key up & left.
                 if (currentGameMode.mode == MODE_EZ.mode) input = 98;
@@ -327,6 +335,7 @@ void showBeyondSelectView() {
             }
         }
     }
+    return true;
 }
 
 /**
