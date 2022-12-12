@@ -1,0 +1,1 @@
+windres app-icon.rc app-icon.o
