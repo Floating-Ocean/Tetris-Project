@@ -116,6 +116,7 @@ void startGame() {
             break;
         }
         extractNextBlock();
+        bool awaitDirectionInput = false;
         while (true) { //使用线程实现可靠的Timer
             pthread_t thread;
             pthread_create(&thread, NULL, timeThread, NULL);
@@ -123,48 +124,72 @@ void startGame() {
             pthread_join(thread, &result); //是否有键盘事件
             if (strcmp((char *) result, "false") == 0) { //处理键盘事件
                 int input = getch();
-                if (input == 72) rotateBlock(); //key up
-                else if (input == 75) moveBlock(DIRECTION_LEFT); //key left
-                else if (input == 77) moveBlock(DIRECTION_RIGHT); //key right
-                else if (input == 80) { //key down
-                    if (!moveBlock(DIRECTION_DOWN)) break;
-                } else if (input == 114 || input == 27) { //输入R or esc: 重开
-                    forceEndGame = true;
-                    endGame(true);
-                    break;
-                } else if (input == 107) { //输入K: 暂停
-                    if (currentGameMode.mode == MODE_IN.mode) continue;
-                    int turn = 0;
-                    bool showingWhat = false;
-                    char curTitle[35];
-                    sprintf(curTitle, "In Game    %s Mode    Paused", beyondEnabled ? "BYD" : currentGameMode.modeName); //标题显示暂停
-                    refreshTitleState(curTitle);
-                    animateDarkenCover(N, darkLevel + 1, 12); //做一个变成黄条的动画
-                    while (true) {
-                        if (kbhit() && getch() != 107) break;
-                        if (turn % 100 == 0) {
-                            showingWhat = !showingWhat;
-                            turn = 1;
-                            SetTextInPosition(showingWhat ? "  游戏已暂停  " : "  任意键继续  ", 80, 5, blocks[nextBlock].color);
-                        }
-                        Sleep(10);
-                        turn++;
+                if (input == 224) {
+                    awaitDirectionInput = true; //方向键前置符
+                    continue;
+                }
+                if (awaitDirectionInput) {
+                    awaitDirectionInput = false;
+                    if (input == 72) rotateBlock(); //key up
+                    else if (input == 75) moveBlock(DIRECTION_LEFT); //key left
+                    else if (input == 77) moveBlock(DIRECTION_RIGHT); //key right
+                    else if (input == 80) { //key down
+                        if (!moveBlock(DIRECTION_DOWN)) break;
                     }
-                    animateDarkenCover(N, darkLevel + 1, 7);
-                    SetTextInPosition("  下一个方块  ", 80, 5, 7);
-                    char oldTitle[35];
-                    sprintf(oldTitle, "In Game    %s Mode", beyondEnabled ? "BYD" : currentGameMode.modeName); //恢复标题
-                    refreshTitleState(oldTitle);
-                } else if (input == 99) { //输入C: 存方块
-                    saveBlock();
-                } else if (input == 112) {
-                    if (!hidePreviewTemporarily) { //防止冲突
-                        enablePreview = !enablePreview;
-                        insertDB("TetrisSetting", "EnablePreview", enablePreview);
-                        refreshPreview();
+                } else {
+                    if (input == 82 || input == 114 || input == 27) { //输入大小写R or esc: 重开
+                        forceEndGame = true;
+                        endGame(true);
+                        break;
+                    } else if (input == 75 || input == 107) { //输入大小写K: 暂停
+                        if (currentGameMode.mode == MODE_IN.mode) continue;
+                        int turn = 0;
+                        bool showingWhat = false;
+                        char curTitle[35];
+                        sprintf(curTitle, "In Game    %s Mode    Paused",
+                                beyondEnabled ? "BYD" : currentGameMode.modeName); //标题显示暂停
+                        refreshTitleState(curTitle);
+                        animateDarkenCover(N, darkLevel + 1, 12); //做一个变成黄条的动画
+                        bool awaitInside = false;
+                        while (true) {
+                            if (kbhit()){
+                                int inputInside = getch();
+                                if(inputInside == 224){ //不把224作为有效输入.
+                                    awaitInside = true;
+                                    continue;
+                                }
+                                if(awaitInside && (inputInside == 72 || inputInside == 80 || inputInside == 75 || inputInside == 77)){ //特判方向键
+                                    awaitInside = false;
+                                    break;
+                                }
+                                if(inputInside != 75 && inputInside != 107) break;
+                            }
+                            if (turn % 100 == 0) {
+                                showingWhat = !showingWhat;
+                                turn = 1;
+                                SetTextInPosition(showingWhat ? "  游戏已暂停  " : "  任意键继续  ", 80, 5,
+                                                  blocks[nextBlock].color);
+                            }
+                            Sleep(10);
+                            turn++;
+                        }
+                        animateDarkenCover(N, darkLevel + 1, 7);
+                        SetTextInPosition("  下一个方块  ", 80, 5, 7);
+                        char oldTitle[35];
+                        sprintf(oldTitle, "In Game    %s Mode",
+                                beyondEnabled ? "BYD" : currentGameMode.modeName); //恢复标题
+                        refreshTitleState(oldTitle);
+                    } else if (input == 67 || input == 99) { //输入大小写C: 存方块
+                        saveBlock();
+                    } else if (input == 80 || input == 112) {//输入大小写P: 切换详细信息的显示
+                        if (!hidePreviewTemporarily) { //防止冲突
+                            enablePreview = !enablePreview;
+                            insertDB("TetrisSetting", "EnablePreview", enablePreview);
+                            refreshPreview();
+                        }
                     }
                 }
-            } else {//下落
+            }else{
                 if (!moveBlock(DIRECTION_DOWN)) break;
             }
         }

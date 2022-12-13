@@ -115,38 +115,48 @@ bool showSelectView() {
     bool selected = false, confirm = false;
     int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13}, currentChallengeInputIndex = -1;
     int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80}, currentBeyondInputIndex = -1;
+    bool awaitDirectionInput = false;
     while (!confirm) { //未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
-            if(input == 27){
-                showWelcomePage();
-                return false;
-            }else if(input == 224) continue;
-            if(!challengeModeEnabled) { //读取输入challenge回车
-                if (challengeInput[++currentChallengeInputIndex] == input) {
-                    if (currentChallengeInputIndex == 9) {
-                        noticeChallengeEnable();
-                        break;
-                    }
-                } else currentChallengeInputIndex = -1;
-            }else{
+            if (input == 224) {
+                awaitDirectionInput = true; //方向键前置符
+                continue;
+            }
+            if (awaitDirectionInput) {
+                awaitDirectionInput = false;
                 if (beyondInput[++currentBeyondInputIndex] == input) {
                     if (currentBeyondInputIndex == 17) {
                         return showBeyondSelectView();
                     }
                 } else currentBeyondInputIndex = -1;
-            }
-            //做一个方向键循环选择
-            if (input == 72 || input == 75) { //key up & left.
-                if (currentGameMode.mode == MODE_EZ.mode) input = 105;
-                else if (currentGameMode.mode == MODE_HD.mode) input = 101;
-                else if (currentGameMode.mode == MODE_IN.mode) input = 104;
-            } else if (input == 80 || input == 77) { //key down & right.
-                if (currentGameMode.mode == MODE_EZ.mode) input = 104;
-                else if (currentGameMode.mode == MODE_HD.mode) input = 105;
-                else if (currentGameMode.mode == MODE_IN.mode) input = 101;
+                //做一个方向键循环选择
+                if (input == 72 || input == 75) { //key up & left.
+                    if (currentGameMode.mode == MODE_EZ.mode) input = 105;
+                    else if (currentGameMode.mode == MODE_HD.mode) input = 101;
+                    else if (currentGameMode.mode == MODE_IN.mode) input = 104;
+                } else if (input == 80 || input == 77) { //key down & right.
+                    if (currentGameMode.mode == MODE_EZ.mode) input = 104;
+                    else if (currentGameMode.mode == MODE_HD.mode) input = 105;
+                    else if (currentGameMode.mode == MODE_IN.mode) input = 101;
+                }
+            }else {
+                if (input == 27) {
+                    showWelcomePage();
+                    return false;
+                }
+                if (!challengeModeEnabled) { //读取输入challenge回车
+                    if (challengeInput[++currentChallengeInputIndex] == input ||
+                        (currentChallengeInputIndex < 9 && challengeInput[currentChallengeInputIndex] - 32 == input)) {
+                        if (currentChallengeInputIndex == 9) {
+                            noticeChallengeEnable();
+                            break;
+                        }
+                    } else currentChallengeInputIndex = -1;
+                }
             }
             switch (input) {
+                case 69:
                 case 101: //E
                     if (selected) {
                         if (currentGameMode.mode == MODE_EZ.mode) {
@@ -163,6 +173,7 @@ bool showSelectView() {
                         showCurrentMode(ez, MODE_EZ, 11);
                     }
                     break;
+                case 72:
                 case 104: //H
                     if (selected) {
                         if (currentGameMode.mode == MODE_HD.mode) {
@@ -179,6 +190,7 @@ bool showSelectView() {
                         showCurrentMode(hd, MODE_HD, 12);
                     }
                     break;
+                case 73:
                 case 105: //I
                     if (selected) {
                         if (currentGameMode.mode == MODE_IN.mode) {
@@ -220,27 +232,36 @@ bool showBeyondSelectView() {
     printOne(1, 8, 9, hd);
     printOne(2, 8, 9, in);
     printOne(3, 8, 9, byd);
-    bool selected = false, confirm = false;
+    bool selected = false, confirm = false, awaitDirectionInput = false;
     while (!confirm) { //未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
-            if(input == 27){
-                showWelcomePage();
-                return false;
+            if (input == 224) {
+                awaitDirectionInput = true; //方向键前置符
+                continue;
             }
-            //做一个方向键循环选择
-            if (input == 72 || input == 75) { //key up & left.
-                if (currentGameMode.mode == MODE_EZ.mode) input = 98;
-                else if (currentGameMode.mode == MODE_HD.mode) input = 101;
-                else if (beyondEnabled) input = 105;
-                else if (currentGameMode.mode == MODE_IN.mode) input = 104;
-            } else if (input == 80 || input == 77) { //key down & right.
-                if (currentGameMode.mode == MODE_EZ.mode) input = 104;
-                else if (currentGameMode.mode == MODE_HD.mode) input = 105;
-                else if(beyondEnabled) input = 101;
-                else if (currentGameMode.mode == MODE_IN.mode) input = 98;
+            if(awaitDirectionInput){
+                awaitDirectionInput = false;
+                //做一个方向键循环选择
+                if (input == 72 || input == 75) { //key up & left.
+                    if (currentGameMode.mode == MODE_EZ.mode) input = 98;
+                    else if (currentGameMode.mode == MODE_HD.mode) input = 101;
+                    else if (beyondEnabled) input = 105;
+                    else if (currentGameMode.mode == MODE_IN.mode) input = 104;
+                } else if (input == 80 || input == 77) { //key down & right.
+                    if (currentGameMode.mode == MODE_EZ.mode) input = 104;
+                    else if (currentGameMode.mode == MODE_HD.mode) input = 105;
+                    else if(beyondEnabled) input = 101;
+                    else if (currentGameMode.mode == MODE_IN.mode) input = 98;
+                }
+            }else{
+                if(input == 27){
+                    showWelcomePage();
+                    return false;
+                }
             }
             switch (input) {
+                case 69:
                 case 101: //E
                     if (selected) {
                         if (currentGameMode.mode == MODE_EZ.mode) {
@@ -263,6 +284,7 @@ bool showBeyondSelectView() {
                         printOne(3, 8, 9, byd);
                     }
                     break;
+                case 72:
                 case 104: //H
                     if (selected) {
                         if (currentGameMode.mode == MODE_HD.mode) {
@@ -285,6 +307,7 @@ bool showBeyondSelectView() {
                         printOne(3, 8, 9, byd);
                     }
                     break;
+                case 73:
                 case 105: //I
                     if (selected) {
                         if (!beyondEnabled && currentGameMode.mode == MODE_IN.mode) {
@@ -307,6 +330,7 @@ bool showBeyondSelectView() {
                         printOne(3, 8, 9, byd);
                     }
                     break;
+                case 66:
                 case 98: //B
                     if (selected) {
                         if (beyondEnabled) {

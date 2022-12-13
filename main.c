@@ -17,8 +17,8 @@
 #include "collect/Collection.h"
 
 //-----版本控制-----
-const char *versionName = "2.1.0";
-const char *versionNameFull = "2.1.0.221210";
+const char *versionName = "2.1.1";
+const char *versionNameFull = "2.1.1.221213";
 
 //-----常量区-----
 const int DIRECTION_LEFT = -1, DIRECTION_RIGHT = 1, DIRECTION_DOWN = 0;
