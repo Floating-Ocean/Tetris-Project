@@ -17,8 +17,8 @@
 #include "collect/Collection.h"
 
 //-----版本控制-----
-const char *versionName = "2.1.1";
-const char *versionNameFull = "2.1.1.221213";
+const char *versionName = "2.1.2";
+const char *versionNameFull = "2.1.2.221216";
 
 //-----常量区-----
 const int DIRECTION_LEFT = -1, DIRECTION_RIGHT = 1, DIRECTION_DOWN = 0;
@@ -34,7 +34,7 @@ int nextBlock, nextRotate, savedBlock, savedRotate;
 int score = 0, darkLevel = 0, trialMove = 0, removedLines = 0;
 int challengeModeFault = 0;
 double speedMultiply = 1.0;
-bool enablePreview = false, hidePreviewTemporarily = false, challengeModeEnabled = false, beyondEnabled = false;
+bool enablePreview = false, hidePreviewTemporarily = false, challengeModeEnabled = false, beyondEnabled = false, challengeComplete = false;
 bool forceEndGame = false;
 DWORD speedMultiplyEnabledTime;
 char **inputArgument;
@@ -45,8 +45,8 @@ char **inputArgument;
  */
 int main(int argc, char **argv) {
     inputArgument = argv;
-    if(!checkEnvironment(argc)) return 0;
-    if(!initializeConsole()) return 0;
+    if (!checkEnvironment(argc)) return 0;
+    if (!initializeConsole()) return 0;
     initializeBlock();
     showStartPage();
 }
@@ -56,18 +56,18 @@ int main(int argc, char **argv) {
  * @param argumentCount 命令行参数数量
  * @return 是否继续游戏
  */
-bool checkEnvironment(int argumentCount){
+bool checkEnvironment(int argumentCount) {
     //强行从conhost打开,Windows Terminal的可玩度太低了
     SetConsoleOutputCP(65001);
     if (argumentCount != 2 || strcmp(inputArgument[1], "/openConhost") != 0) {
-        if(argumentCount == 2){
-            if(importCustomTheme(inputArgument[1])) printf("\n\n\n  主题导入成功，可在下次打开游戏时切换.");
+        if (argumentCount == 2) {
+            if (importCustomTheme(inputArgument[1])) printf("\n\n\n  主题导入成功，可在下次打开游戏时切换.");
             system("pause > nul");
             return false;
         }
         system("title Tetris Loader");
         printf("\n  Please Wait . . .");
-        if(!checkFont()){
+        if (!checkFont()) {
             system("cls");
             printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
             system("pause > nul");
@@ -86,7 +86,7 @@ bool checkEnvironment(int argumentCount){
 /**
  * 显示最初的开始页
  */
-void showStartPage(){
+void showStartPage() {
     system("cls & mode con cols=50 lines=34");
     PlaceWindowCentral();
     refreshTitleState("");
@@ -100,15 +100,16 @@ void showStartPage(){
         if (kbhit()) {
             int input = getch();
             if (input == 116) { //T键切换主题
-                int themeRange = queryDB("TetrisSetting", "ImportedTheme") ? 2 : 1, oldTheme = queryDB("TetrisSetting", "ThemeType"),
-                    newTheme = oldTheme + 1 > themeRange ? 0 : oldTheme + 1;
-                insertDB("TetrisSetting", "ThemeType",  newTheme > themeRange ? themeRange : newTheme);
+                int themeRange = queryDB("TetrisSetting", "ImportedTheme") ? 2 : 1, oldTheme = queryDB("TetrisSetting",
+                                                                                                       "ThemeType"),
+                        newTheme = oldTheme + 1 > themeRange ? 0 : oldTheme + 1;
+                insertDB("TetrisSetting", "ThemeType", newTheme > themeRange ? themeRange : newTheme);
                 char command[350] = "start conhost ";
                 strcat(command, inputArgument[0]);
                 strcat(command, " /openConhost");
                 system(command);
                 return;
-            }else if(input == 27) return; //按esc退出游戏
+            } else if (input == 27) return; //按esc退出游戏
             else break;
         }
     showWelcomePage();
@@ -117,7 +118,7 @@ void showStartPage(){
 /**
  * 显示欢迎页
  */
-void showWelcomePage(){
+void showWelcomePage() {
     system("cls & mode con cols=75 lines=28");
     PlaceWindowCentral();
     refreshTitleState("Welcome");
@@ -137,14 +138,15 @@ void showWelcomePage(){
            "    点按键盘任意键继续.\n\n\n\n"
            "    ©2022 Floating Ocean.\n"
            "    All Rights Reserved.", greeting, userName);
-    while (true) //等待按esc或继续游戏
+    while (true) { //等待按esc或继续游戏
         if (kbhit()) {
             int input = getch();
-            if(input == 27) {
+            if (input == 27) {
                 showStartPage();
                 return; //按esc返回开始页
-            }else break;
+            } else break;
         }
+    }
     system("cls");
     startGame();
 }

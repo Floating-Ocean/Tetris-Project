@@ -42,7 +42,7 @@ extern int nextBlock, nextRotate, savedBlock, savedRotate;
 extern int score, darkLevel, trialMove, removedLines;
 extern int challengeModeFault;
 extern double speedMultiply;
-extern bool enablePreview, hidePreviewTemporarily, challengeModeEnabled, beyondEnabled;
+extern bool enablePreview, hidePreviewTemporarily, challengeModeEnabled, beyondEnabled, challengeComplete;
 extern bool forceEndGame;
 extern DWORD speedMultiplyEnabledTime;
 extern char **inputArgument;
@@ -61,7 +61,7 @@ extern void randomizeBlockColor();
 
 extern void initializeBlock();
 
-extern void printScore(int score);
+extern void printScore(int showScore);
 
 extern void initializeScore();
 
@@ -182,7 +182,7 @@ extern void getCurrentGreeting(char *greet);
 
 extern int hexToDec(char hex);
 
-extern COLORREF hexToRGB(char* hex);
+extern COLORREF hexToRGB(char *hex);
 
 //计时器 Timer.c
 extern void *timeThread(void *args);

@@ -17,7 +17,9 @@
 #include "../collect/Collection.h"
 
 //三个难度
-GameMode MODE_EZ = {"EZ", 0x00, 500, 1}, MODE_HD = {"HD", 0x01, 300, 2}, MODE_IN = {"IN", 0x02, 200, 5};
+GameMode MODE_EZ = {"EZ", 0x00, 500, 1},
+        MODE_HD = {"HD", 0x01, 300, 2},
+        MODE_IN = {"IN", 0x02, 200, 5};
 GameMode currentGameMode;
 
 /**
@@ -36,10 +38,8 @@ void printOne(int index, int textColor, int borderColor, char **text) {
     }
     MoveCursor(5, 10 + index * 8);
     for (int i = 0; i < 36; i++) printf("■");
-    AwaitSettingTextInPosition(8, 7 + index * 8, textColor);
-    printf("%s", text[0]);
-    MoveCursor(8, 8 + index * 8);
-    printf("%s", text[1]);
+    SetTextInPosition(text[0], 8, 7 + index * 8, textColor);
+    SetTextInPosition(text[1], 8, 8 + index * 8, textColor);
 }
 
 /**
@@ -50,10 +50,10 @@ void printOne(int index, int textColor, int borderColor, char **text) {
  */
 void showCurrentMode(char **text, GameMode mode, int color) {
     currentGameMode = mode;
-    if(!beyondEnabled) printOne(mode.mode, color, color, text);
-    MoveCursor(5, 2);
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    printf("%s%s%s", "当前选中游戏模式：  ", beyondEnabled ? "BYD" : (mode.mode == 0x00 ? "EZ" : mode.mode == 0x01 ? "HD" : "IN"),
+    if (!beyondEnabled) printOne(mode.mode, color, color, text);
+    AwaitSettingTextInPosition(5, 2, 7);
+    printf("%s%s%s", "当前选中游戏模式：  ",
+           beyondEnabled ? "BYD" : (mode.mode == 0x00 ? "EZ" : mode.mode == 0x01 ? "HD" : "IN"),
            " Mode   按空格键继续.");
 }
 
@@ -61,36 +61,22 @@ void showCurrentMode(char **text, GameMode mode, int color) {
  * 未选中，恢复原标题
  */
 void recoverTitle() {
-    MoveCursor(5, 2);
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    printf("选择一个游戏模式并按下对应按键以继续...         ");
+    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, 7);
 }
 
 /**
  * 通知玩家触发挑战模式，并介绍游戏规则
  */
-void noticeChallengeEnable(){
+void noticeChallengeEnable() {
     system("cls & mode con cols=90 lines=20");
     PlaceWindowCentral();
     refreshTitleState("Challenge Mode Notification");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 10 + 3);
-    MoveCursor(29, 4);
-    printf(" — Challenge Mode Enabled — ");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    MoveCursor(24, 10);
-    printf("本模式下所有难度惩罚次数");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 12 + 3);
-    MoveCursor(48, 10);
-    printf("3次");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    MoveCursor(51, 10);
-    printf("判定");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 10 + 3);
-    MoveCursor(55, 10);
-    printf("游戏失败");
-    MoveCursor(36, 14);
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    printf("按 任 意 键 继 续");
+    SetTextInPosition(" — Challenge Mode Enabled — ", 29, 4, 10);
+    SetTextInPosition("本模式下所有难度惩罚次数", 24, 10, 7);
+    SetTextInPosition("3次", 48, 10, 12);
+    SetTextInPosition("判定", 51, 10, 7);
+    SetTextInPosition("游戏失败", 55, 10, 10);
+    SetTextInPosition("按 任 意 键 继 续", 36, 14, 7);
     system("pause > nul");
     challengeModeEnabled = true;
     showSelectView();
@@ -103,9 +89,7 @@ bool showSelectView() {
     system("cls & mode con cols=82 lines=29");
     PlaceWindowCentral();
     refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    MoveCursor(5, 2);
-    printf("选择一个游戏模式并按下对应按键以继续...         ");
+    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, 7);
     char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除最后三行内的几个格子."};
     char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除最后十行内的多个格子."};
     char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机效果，游戏无法暂停."};
@@ -114,7 +98,8 @@ bool showSelectView() {
     printOne(2, 8, 9, in);
     bool selected = false, confirm = false;
     int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13}, currentChallengeInputIndex = -1;
-    int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80}, currentBeyondInputIndex = -1;
+    int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+                         80}, currentBeyondInputIndex = -1;
     bool awaitDirectionInput = false;
     while (!confirm) { //未决定难度，等待输入
         if (kbhit()) {
@@ -140,7 +125,7 @@ bool showSelectView() {
                     else if (currentGameMode.mode == MODE_HD.mode) input = 105;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 101;
                 }
-            }else {
+            } else {
                 if (input == 27) {
                     showWelcomePage();
                     return false;
@@ -221,9 +206,7 @@ bool showBeyondSelectView() {
     system("cls & mode con cols=82 lines=37");
     PlaceWindowCentral();
     refreshTitleState("Inner Mode Choosing    Challenge Mode");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 7 + 3);
-    MoveCursor(5, 2);
-    printf("选择一个游戏模式并按下对应按键以继续...         ");
+    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, 7);
     char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除最后三行内的几个格子."};
     char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除最后十行内的多个格子."};
     char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机效果，游戏无法暂停."};
@@ -240,7 +223,7 @@ bool showBeyondSelectView() {
                 awaitDirectionInput = true; //方向键前置符
                 continue;
             }
-            if(awaitDirectionInput){
+            if (awaitDirectionInput) {
                 awaitDirectionInput = false;
                 //做一个方向键循环选择
                 if (input == 72 || input == 75) { //key up & left.
@@ -251,11 +234,11 @@ bool showBeyondSelectView() {
                 } else if (input == 80 || input == 77) { //key down & right.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 104;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 105;
-                    else if(beyondEnabled) input = 101;
+                    else if (beyondEnabled) input = 101;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 98;
                 }
-            }else{
-                if(input == 27){
+            } else {
+                if (input == 27) {
                     showWelcomePage();
                     return false;
                 }
@@ -348,6 +331,7 @@ bool showBeyondSelectView() {
                         }
                     } else {
                         selected = true;
+                        beyondEnabled = true;
                         printOne(3, 10, 10, byd);
                         showCurrentMode(in, MODE_IN, 10);
                     }
@@ -380,8 +364,10 @@ void refreshPreview() {
     printf("                                                                               ");
     if (!enablePreview) return;
     AwaitSettingTextInPosition(4, 1, 8);
-    printf("Difficulty:  %s. %d    Move Per Second:  %.02f    Removed Lines:  %d", beyondEnabled ? "BYD" : currentGameMode.modeName,
-           (int) ((beyondEnabled ? 1.5f : 1.0f) * (float) calculateLevel()), 1000 / (double) currentGameMode.speed * (1 / speedMultiply), removedLines);
+    printf("Difficulty:  %s. %d    Move Per Second:  %.02f    Removed Lines:  %d",
+           beyondEnabled ? "BYD" : currentGameMode.modeName,
+           (int) ((beyondEnabled ? 1.5f : 1.0f) * (float) calculateLevel()),
+           1000 / (double) currentGameMode.speed * (1 / speedMultiply), removedLines);
 }
 
 /**

@@ -90,13 +90,13 @@ void initializeBlock() {
 }
 
 /**
- * 格式化score的输出
- * @param score 分数
+ * 格式化score的输出(前置空格)
+ * @param showScore 分数
  */
-void printScore(int score) {
-    if (score < 10) printf("      %d 分  ", score);
-    else if (score < 100) printf("     %d 分   ", score);
-    else printf("     %d 分  ", score);
+void printScore(int showScore) {
+    if (showScore < 10) printf("      %d 分  ", showScore);
+    else if (showScore < 100) printf("     %d 分   ", showScore);
+    else printf("     %d 分  ", showScore);
 }
 
 /**
@@ -109,7 +109,8 @@ void initializeScore() {
     printScore(score);
     SetTextInPosition("    历史最高   ", 5, 11, 7);
     AwaitSettingTextInPosition(5, 13, 8);
-    printScore(challengeModeEnabled ? queryDB("TetrisData", "ChallengeBestRecord") : queryDB("TetrisData", "BestRecord"));
+    printScore(challengeModeEnabled ? queryDB("TetrisData", "ChallengeBestRecord") :
+               queryDB("TetrisData", "BestRecord"));
     bool tmp = beyondEnabled;
     beyondEnabled = false;
     animateDarkenRecover(N, 7); //刷新Darken值的ui显示
@@ -129,8 +130,7 @@ void initializeSavedBlock() {
  * 初始化主交互ui
  */
 void initializeMap() {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | 9 + 3);
-    printf("\n\n    ");
+    SetTextInPosition("\n\n    ", 0, 0, 9);
     for (int i = 0; i < 9; i++) printf("■"); //left
     printf("  ");
     for (int i = 0; i < N + 2; i++) printf("■"); //mid
@@ -371,7 +371,9 @@ void judgeLines() {
         }
     }
     if (nowRemoved > 0) { //统计加分并输出到ui
-        int addScore = comboScore[min(3, nowRemoved - 1)] * nowRemoved * currentGameMode.multiply; //漏写了removedLine哈哈哈，我好蠢
+        int addScore =
+                comboScore[min(3, nowRemoved - 1)] * nowRemoved * currentGameMode.multiply; //漏写了removedLine哈哈哈，我好蠢
+        if(startLine == N) addScore += 150 * currentGameMode.multiply; //全部被玩家消除完
         score += addScore;
         removedLines += nowRemoved; //统计删除的行
         if (enablePreview) refreshPreview();
@@ -381,9 +383,13 @@ void judgeLines() {
         char added[100];
         sprintf(added, "Score Got:  %d！", addScore);
         showRandomActionHint(added);
-        recoverDarkenLevel(false); //成功消行，恢复Darken值
+        if(startLine < N || !challengeModeEnabled) recoverDarkenLevel(false); //成功消行，恢复Darken值
         showRandomActionHint("");
         hidePreview(false);
+        if(startLine == N && challengeModeEnabled){ //全部消完，判定挑战模式成功
+            challengeComplete = true; //强制成功
+            endGame(false);
+        }
     }
 }
 
@@ -535,7 +541,7 @@ void changeSpeedRandomly() {
     showRandomActionHint(down ? "Speed Down!" : "Speed Up!");
     recoverDarkenLevel(true); //恢复Darken值
     speedMultiply = down ? (double) randBetween(1250, 1562) / 1000
-            : (double) randBetween(250, 500) / 1000; //0.64~0.80, 2.00~4.00倍速，精度0.01
+                         : (double) randBetween(250, 500) / 1000; //0.64~0.80, 2.00~4.00倍速，精度0.01
     if (enablePreview) refreshPreview();
     speedMultiplyEnabledTime = GetTickCount();
     showRandomActionHint("");
@@ -552,9 +558,9 @@ void checkDarkenLevel() {
         darkLevel++;
         if (darkLevel < N) downDrawDarkenLevel();
         else { //记录一次惩罚
-            if(challengeModeEnabled){
-                challengeModeFault ++;
-                if(challengeModeFault >= 3){ //挑战失败
+            if (challengeModeEnabled) {
+                challengeModeFault++;
+                if (challengeModeFault >= 3) { //挑战失败
                     forceEndGame = true;
                     endGame(false);
                     return;
@@ -570,7 +576,7 @@ void checkDarkenLevel() {
                 }
             }
             if (!eraseBlockRandomly()) {
-                score += 100; //能消完也是个神仙了
+                score += beyondEnabled ? 25 : 100; //能消完也是个神仙了
                 AwaitSettingTextInPosition(5, 7, 8);
                 printScore(score);
             }

@@ -20,7 +20,7 @@ int CALLBACK EnumFontsProc(LOGFONT *lplf, TEXTMETRIC *lptm, DWORD dwType, LPARAM
     return 10;
 }
 
-bool checkFont(){
-    LPARAM  lp;
-    return EnumFonts(GetDC(GetActiveWindow()), "Sarasa Mono SC",(FONTENUMPROC) EnumFontsProc,lp) == 10;
+bool checkFont() {
+    LPARAM lp;
+    return EnumFonts(GetDC(GetActiveWindow()), "Sarasa Mono SC", (FONTENUMPROC) EnumFontsProc, lp) == 10;
 }

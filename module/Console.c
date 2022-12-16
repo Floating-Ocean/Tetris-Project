@@ -64,7 +64,7 @@ void SetTextInPosition(char *text, int x, int y, int color) {
  * 初始化控制台自定义字体
  */
 bool initializeFont() {
-    if(!checkFont()){
+    if (!checkFont()) {
         PlaceWindowCentral();
         refreshTitleState("");
         printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
@@ -93,7 +93,7 @@ void initializeColor() {
         COLORREF colors[16];
         char *tags[16] = {"BackgroundColor", "BackgroundColor", "BackgroundColor",
                           "BlockColor_0", "BlockColor_1", "BlockColor_2", "BlockColor_3", "BlockColor_4",
-                          "BlockColor_5", "BlockColor_6","ForegroundStrongColor", "ForegroundModestColor",
+                          "BlockColor_5", "BlockColor_6", "ForegroundStrongColor", "ForegroundModestColor",
                           "ForegroundMildColor", "FaultColor", "PassColor", "WarningColor"};
         for (int i = 0; i < 16; i++) {
             char nowColor[10];
@@ -189,7 +189,7 @@ bool initializeConsole() {
     system("color 0A");
     SetConsoleOutputCP(65001);
     initializeColor();
-    if(!initializeFont()) return false;
+    if (!initializeFont()) return false;
     DisableFeatures();
     HideCursor();
     return true;

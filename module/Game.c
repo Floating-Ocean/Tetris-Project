@@ -22,36 +22,40 @@
  */
 void endGame(bool force) {
     refreshTitleState(challengeModeEnabled ? "Game End    Challenge Mode" : "Game End");
-    SetTextInPosition(force ? "  游戏被终止  " : (challengeModeEnabled ? (challengeModeFault >= 3 && removedLines <= 25 ? "  挑战失败.  " : "  挑战结束！  ") : "  你寄了嘞！  "), 80, 5, 7);
-    if(!force && challengeModeFault >= 3 && removedLines <= 25) animateDarkenCover(N, 1, 10); //做一个变成黄条的动画
+    //挑战模式完成需要的条件：①惩罚不超过3次 ②达成下面的任何一个条件：a. 消除的行数达到25 b. 消除的行数达到10，并且分数达到150（即需要一定的连消分）.
+    if(!challengeComplete) challengeComplete = challengeModeFault <= 3 && (removedLines >= 25 || (removedLines >= 10 && score >= 150)); //引入一个强制挑战模式成功的逻辑
+    SetTextInPosition(force ? "  游戏被终止  " :
+                      (challengeModeEnabled ? (challengeComplete ? "  挑战成功!  " : "  挑战失败.  ")
+                                            : "  你寄了嘞！  "), 80, 5, 7);
+    if(challengeModeEnabled) animateDarkenCover(N, 1, challengeComplete ? 11 : 10); //成功为绿，失败为红
     else animateDarkenCover(N, darkLevel + 1, force ? 12 : 10); //做一个变成黄条的动画
     for (int i = 0; i < 4; i++) {
         MoveCursor(84, 7 + i);
-        for (int j = 0; j < 4; j++) {
-            printf("  ");
-        }
+        for (int j = 0; j < 4; j++) printf("  ");
     }
     SetTextInPosition("  按空格重开 ", 80, 9, 7);
-    if(challengeModeFault >= 3 && removedLines <= 25){ //挑战失败不计入成绩
-        SetTextInPosition("             ", 5, 11, 7);
-        SetTextInPosition("   分数不计入 ", 5, 12, 7);
-        SetTextInPosition("           ", 5, 13, 7);
-    }else{
-        if (queryDB("TetrisData", "ChallengeBestRecord") < score) {
-            insertDB("TetrisData", "ChallengeBestRecord", score);
+    if (challengeModeEnabled) {
+        if (force || !challengeComplete) { //挑战失败不计入成绩，终止游戏视为挑战失败
+            SetTextInPosition("             ", 5, 11, 7);
+            SetTextInPosition("   分数不计入 ", 5, 12, 7);
+            SetTextInPosition("           ", 5, 13, 7);
+        } else {
+            if (queryDB("TetrisData", "ChallengeBestRecord") < score) {
+                insertDB("TetrisData", "ChallengeBestRecord", score);
+                SetTextInPosition("             ", 5, 11, 7);
+                SetTextInPosition("    NEW BEST   ", 5, 12, 7);
+                SetTextInPosition("           ", 5, 13, 7);
+            }
+        }
+    } else {
+        if (queryDB("TetrisData", "BestRecord") < score) {
+            insertDB("TetrisData", "BestRecord", score);
             SetTextInPosition("             ", 5, 11, 7);
             SetTextInPosition("    NEW BEST   ", 5, 12, 7);
             SetTextInPosition("           ", 5, 13, 7);
         }
     }
-    if (queryDB("TetrisData", "BestRecord") < score) {
-        insertDB("TetrisData", "BestRecord", score);
-        SetTextInPosition("             ", 5, 11, 7);
-        SetTextInPosition("    NEW BEST   ", 5, 12, 7);
-        SetTextInPosition("           ", 5, 13, 7);
-    }
-    challengeModeEnabled = false;
-    beyondEnabled = false;
+    challengeModeEnabled = challengeComplete = beyondEnabled = false;
     while (true) //等待按空格重开
         if (kbhit()) {
             int input = getch();
@@ -67,17 +71,19 @@ void endGame(bool force) {
  * 初始化并输出Greetings到对应ui区
  */
 void showGreetings() {
-    char *greetings01[34] = {"我就知道,", "这里啊,", "消行消行~", "哎哎哎， ", "总会有种", "长按上键", "万物，尘埃.",
-                             "EZ难度呢,", "HD难度啊,", "IN难度呀,", "翻 (低头)", "有没有可能", "有没有可能", "哎呀我丢", "你干嘛~",
-                             "两只老虎", "这里是", "5YW9LStfLg==", "Challenge", "↑↑↓↓", "新的事物，", "超越一切，",
-                             "你说这C语言", "哼 哼 哼", "你是一个一个", "存点吧孩子", "这里是，", "Challenge~", "挑战未知，",
-                             "哪里更新游戏", "作者啊作者", "游戏这玩意儿", "你...搁这儿", "俄罗斯方块"};
-    char *greetings02[34] = {"你会看这里.", "什么都没有!", "GKD! 好兄弟.", "要寄了！！", "被坑的感觉.", "长条变风车.",
-                             "尘埃落定吗?", "它不叫摁着.", "它不叫高清.", "它不叫里面.", "给你看啥呢?", "这是一句话.", "你在看这里.",
-                             "咋还有空格.", "嘿嘿嘿呦", "爱跳舞~", "Greetings!", ".+-..---.-__", "Type it.", "←←→→", "在未知处...",
-                             "创死凡人！", "咋这么难搞", "啊啊啊啊啊", "俄罗斯方块啊", "不存白不存", "这里是那里", "25 Kill！", "方可超越未知",
-                             "GitHub？", "格子间距真宽", "一瞬间就崩力", "叠罗汉呢??", "旋转四分钟~"};
-    int index = randBetween(0, 33);
+    char *greetings01[36] = {"我就知道,", "这里啊,", "消行消行~", "哎哎哎， ", "总会有种", "长按上键", "万物，尘埃.",
+                             "EZ难度呢,", "HD难度啊,", "IN难度呀,", "翻 (低头)", "有没有可能", "有没有可能", "哎呀我丢",
+                             "你干嘛~", "两只老虎", "这里是", "5YW9LStfLg==", "Challenge", "↑↑↓↓", "新的事物，",
+                             "超越一切，", "你说这C语言", "哼 哼 哼", "你是一个一个", "存点吧孩子", "这里是，",
+                             "Challenge~", "挑战未知，", "哪里更新游戏", "游戏这玩意儿", "你...搁这儿", "俄罗斯方块",
+                             "金克拉！", "Coming", "江源速报："};
+    char *greetings02[36] = {"你会看这里.", "什么都没有!", "GKD! 好兄弟.", "要寄了！！", "被坑的感觉.", "长条变风车.",
+                             "尘埃落定吗?", "它不叫摁着.", "它不叫高清.", "它不叫里面.", "给你看啥呢?", "这是一句话.",
+                             "你在看这里.", "咋还有空格.", "嘿嘿嘿呦", "爱跳舞~", "Greetings!", ".+-..---.-__",
+                             "Type it.", "←←→→", "在未知处...", "创死凡人！", "咋这么难搞", "啊啊啊啊啊", "俄罗斯方块啊",
+                             "不存白不存", "这里是那里", "25 Kill！", "方可超越未知", "GitHub？", "一瞬间就崩力",
+                             "叠罗汉呢??", "旋转四分钟~", "我要金克拉!", "s∞n...", "啥也没报。"};
+    int index = randBetween(0, 35);
     SetTextInPosition(greetings01[index], 8, 20, 7);
     SetTextInPosition(greetings02[index], 8, 22, 7);
     SetTextInPosition("From Ocean", 8, 25, 8);
@@ -87,20 +93,17 @@ void showGreetings() {
  * 开始游戏
  */
 void startGame() {
-    if(!showSelectView()) return; //先显示难度选择页
+    if (!showSelectView()) return; //先显示难度选择页
     system("cls & mode con cols=100 lines=30");
     PlaceWindowCentral();
     char _curTitle[35];
-    sprintf(_curTitle, "In Game    %s Mode    %s", beyondEnabled ? "BYD" : currentGameMode.modeName, challengeModeEnabled ? "Challenge Mode" : "");
+    sprintf(_curTitle, "In Game    %s Mode    %s", beyondEnabled ? "BYD" : currentGameMode.modeName,
+            challengeModeEnabled ? "Challenge Mode" : "");
     refreshTitleState(_curTitle);
     srand(time(NULL)); //初始化随机数种子
-    darkLevel = 0;
-    trialMove = 0;
-    savedBlock = -1;
-    savedRotate = -1;
+    darkLevel = trialMove = removedLines = challengeModeFault = 0;
+    savedBlock = savedRotate = -1;
     speedMultiply = 1.0;
-    challengeModeFault = 0;
-    removedLines = 0;
     initializeMap();
     showGreetings();
     extractNextBlock();
@@ -152,17 +155,18 @@ void startGame() {
                         animateDarkenCover(N, darkLevel + 1, 12); //做一个变成黄条的动画
                         bool awaitInside = false;
                         while (true) {
-                            if (kbhit()){
+                            if (kbhit()) {
                                 int inputInside = getch();
-                                if(inputInside == 224){ //不把224作为有效输入.
+                                if (inputInside == 224) { //不把224作为有效输入.
                                     awaitInside = true;
                                     continue;
                                 }
-                                if(awaitInside && (inputInside == 72 || inputInside == 80 || inputInside == 75 || inputInside == 77)){ //特判方向键
+                                if (awaitInside && (inputInside == 72 || inputInside == 80 ||
+                                                    inputInside == 75 || inputInside == 77)) { //特判方向键
                                     awaitInside = false;
                                     break;
                                 }
-                                if(inputInside != 75 && inputInside != 107) break;
+                                if (inputInside != 75 && inputInside != 107) break;
                             }
                             if (turn % 100 == 0) {
                                 showingWhat = !showingWhat;
@@ -189,7 +193,7 @@ void startGame() {
                         }
                     }
                 }
-            }else{
+            } else {
                 if (!moveBlock(DIRECTION_DOWN)) break;
             }
         }
