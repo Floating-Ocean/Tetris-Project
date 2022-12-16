@@ -25,7 +25,7 @@ void *timeThread(void *args) {
     if (timer.currentTimeMills - timer.previousTimeMills >= currentGameMode.speed * speedMultiply) {
         timer.previousTimeMills = GetTickCount();
         timer.currentTimeMills = timer.previousTimeMills;
-    } else {
+    } else { //处理上一次剩下的时间
         DWORD delta = timer.currentTimeMills - timer.previousTimeMills;
         timer.currentTimeMills = GetTickCount();
         timer.previousTimeMills = timer.currentTimeMills - delta;
@@ -36,12 +36,12 @@ void *timeThread(void *args) {
             if (enablePreview) refreshPreview();
         }
         if (timer.currentTimeMills - timer.previousTimeMills >= currentGameMode.speed * speedMultiply) {
-            pthread_exit("true");
+            pthread_exit("true"); //无键盘事件，可以下落
             break;
         } else {
             timer.currentTimeMills = GetTickCount();
             if (whenBreakTimer()) {
-                pthread_exit("false");
+                pthread_exit("false"); //有键盘事件，打断
                 break;
             }
         }

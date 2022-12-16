@@ -100,8 +100,8 @@ void showStartPage() {
         if (kbhit()) {
             int input = getch();
             if (input == 116) { //T键切换主题
-                int themeRange = queryDB("TetrisSetting", "ImportedTheme") ? 2 : 1, oldTheme = queryDB("TetrisSetting",
-                                                                                                       "ThemeType"),
+                int themeRange = queryDB("TetrisSetting", "ImportedTheme") ? 2 : 1,
+                        oldTheme = queryDB("TetrisSetting", "ThemeType"),
                         newTheme = oldTheme + 1 > themeRange ? 0 : oldTheme + 1;
                 insertDB("TetrisSetting", "ThemeType", newTheme > themeRange ? themeRange : newTheme);
                 char command[350] = "start conhost ";

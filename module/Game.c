@@ -23,11 +23,13 @@
 void endGame(bool force) {
     refreshTitleState(challengeModeEnabled ? "Game End    Challenge Mode" : "Game End");
     //挑战模式完成需要的条件：①惩罚不超过3次 ②达成下面的任何一个条件：a. 消除的行数达到25 b. 消除的行数达到10，并且分数达到150（即需要一定的连消分）.
-    if(!challengeComplete) challengeComplete = challengeModeFault <= 3 && (removedLines >= 25 || (removedLines >= 10 && score >= 150)); //引入一个强制挑战模式成功的逻辑
+    if (!challengeComplete)
+        challengeComplete = challengeModeFault <= 3 &&
+                            (removedLines >= 25 || (removedLines >= 10 && score >= 150)); //引入一个强制挑战模式成功的逻辑
     SetTextInPosition(force ? "  游戏被终止  " :
                       (challengeModeEnabled ? (challengeComplete ? "  挑战成功!  " : "  挑战失败.  ")
                                             : "  你寄了嘞！  "), 80, 5, 7);
-    if(challengeModeEnabled) animateDarkenCover(N, 1, challengeComplete ? 11 : 10); //成功为绿，失败为红
+    if (challengeModeEnabled) animateDarkenCover(N, 1, challengeComplete ? 11 : 10); //成功为绿，失败为红
     else animateDarkenCover(N, darkLevel + 1, force ? 12 : 10); //做一个变成黄条的动画
     for (int i = 0; i < 4; i++) {
         MoveCursor(84, 7 + i);
@@ -56,7 +58,7 @@ void endGame(bool force) {
         }
     }
     challengeModeEnabled = challengeComplete = beyondEnabled = false;
-    while (true) //等待按空格重开
+    while (true) {//等待按空格重开
         if (kbhit()) {
             int input = getch();
             if (input == 32 || input == 13) { //空格或回车
@@ -64,6 +66,7 @@ void endGame(bool force) {
                 break;
             }
         }
+    }
     startGame();
 }
 

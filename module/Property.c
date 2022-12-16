@@ -98,8 +98,8 @@ bool showSelectView() {
     printOne(2, 8, 9, in);
     bool selected = false, confirm = false;
     int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13}, currentChallengeInputIndex = -1;
-    int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77, 80, 80, 80, 80, 80, 80, 80, 80, 80,
-                         80}, currentBeyondInputIndex = -1;
+    int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77,
+                         80, 80, 80, 80, 80, 80, 80, 80, 80, 80}, currentBeyondInputIndex = -1;
     bool awaitDirectionInput = false;
     while (!confirm) { //未决定难度，等待输入
         if (kbhit()) {
