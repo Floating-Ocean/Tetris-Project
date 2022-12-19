@@ -103,17 +103,17 @@ void printScore(int showScore) {
  * 初始化游戏分数系统&ui
  */
 void initializeScore() {
-    SetTextInPosition("    当前分数   ", 5, 5, 7);
+    SetTextInPosition("    当前分数   ", 5, 5, COLOR_MAIN_TEXT);
     score = 0;
-    AwaitSettingTextInPosition(5, 7, 8);
+    AwaitSettingTextInPosition(5, 7, COLOR_SUB_TEXT);
     printScore(score);
-    SetTextInPosition("    历史最高   ", 5, 11, 7);
-    AwaitSettingTextInPosition(5, 13, 8);
+    SetTextInPosition("    历史最高   ", 5, 11, COLOR_MAIN_TEXT);
+    AwaitSettingTextInPosition(5, 13, COLOR_SUB_TEXT);
     printScore(challengeModeEnabled ? queryDB("TetrisData", "ChallengeBestRecord") :
                queryDB("TetrisData", "BestRecord"));
     bool tmp = beyondEnabled;
     beyondEnabled = false;
-    animateDarkenRecover(N, 7); //刷新Darken值的ui显示
+    animateDarkenRecover(N, COLOR_MAIN_TEXT); //刷新Darken值的ui显示
     beyondEnabled = tmp;
 }
 
@@ -121,16 +121,16 @@ void initializeScore() {
  * 初始化已保存方块ui
  */
 void initializeSavedBlock() {
-    SetTextInPosition("  方块未存入  ", 80, 18, 7);
-    SetTextInPosition("  按C键存取,  ", 80, 22, 8);
-    SetTextInPosition("  备不时之需  ", 80, 24, 8);
+    SetTextInPosition("  方块未存入  ", 80, 18, COLOR_MAIN_TEXT);
+    SetTextInPosition("  按C键存取,  ", 80, 22, COLOR_SUB_TEXT);
+    SetTextInPosition("  备不时之需  ", 80, 24, COLOR_SUB_TEXT);
 }
 
 /**
  * 初始化主交互ui
  */
 void initializeMap() {
-    SetTextInPosition("\n\n    ", 0, 0, 9);
+    SetTextInPosition("\n\n    ", 0, 0, COLOR_MILD);
     for (int i = 0; i < 9; i++) printf("■"); //left
     printf("  ");
     for (int i = 0; i < N + 2; i++) printf("■"); //mid
@@ -142,7 +142,7 @@ void initializeMap() {
         for (int j = 0; j < 7; j++) printf(i == 13 || i == 15 ? "■" : "  ");
         printf(i == 14 ? "    ■" : "■  ■");
         for (int j = 0; j < N; j++) {
-            currentMap[i][j].color = 7;
+            currentMap[i][j].color = COLOR_MAIN_TEXT;
             currentMap[i][j].state = 0;
             printf("  ");
         }
@@ -205,7 +205,7 @@ void putBlock(int rotate, int value) {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++) {
             if (now.data[rotate][i][j] == 1) {
-                currentMap[nowFalling.point[0] + i][nowFalling.point[1] + j].color = value ? now.color : 7; //方块颜色
+                currentMap[nowFalling.point[0] + i][nowFalling.point[1] + j].color = value ? now.color : COLOR_MAIN_TEXT; //方块颜色
                 currentMap[nowFalling.point[0] + i][nowFalling.point[1] + j].state = value;
             }
         }
@@ -308,7 +308,7 @@ void extractNextBlock() {
     nextBlock = randBetween(0, 6);
     nextRotate = randBetween(0, 3);
     //输出方块
-    SetTextInPosition("  下一个方块  ", 80, 5, 7);
+    SetTextInPosition("  下一个方块  ", 80, 5, COLOR_MAIN_TEXT);
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | blocks[nextBlock].color + 3);
     for (int i = 0; i < 4; i++) {
         MoveCursor(84, 7 + i);
@@ -377,7 +377,7 @@ void judgeLines() {
         score += addScore;
         removedLines += nowRemoved; //统计删除的行
         if (enablePreview) refreshPreview();
-        AwaitSettingTextInPosition(5, 7, 8);
+        AwaitSettingTextInPosition(5, 7, COLOR_SUB_TEXT);
         printScore(score);
         hidePreview(true);
         char added[100];
@@ -423,8 +423,8 @@ void animateDarkenRecover(int level, int color) {
  * @param fail 成功消行: true, 超时: false
  */
 void recoverDarkenLevel(bool fail) {
-    animateDarkenRecover(darkLevel, fail ? 10 : 11); //10: light red, 11: light green
-    animateDarkenRecover(darkLevel, 7); //恢复到初始颜色
+    animateDarkenRecover(darkLevel, fail ? COLOR_FAULT : COLOR_PASS); //状态颜色提示
+    animateDarkenRecover(darkLevel, COLOR_MAIN_TEXT); //恢复到初始颜色
     darkLevel = (beyondEnabled ? max(1, (darkLevel - max(-5, 9 - score / 12))) : 1) - 1;
     trialMove = 0;
 }
@@ -433,9 +433,9 @@ void recoverDarkenLevel(bool fail) {
  * 图形化显示Darken值的减少
  */
 void downDrawDarkenLevel() {
-    AwaitSettingTextInPosition(24, 2 + darkLevel, 9);
+    AwaitSettingTextInPosition(24, 2 + darkLevel, COLOR_MILD);
     printf("■");
-    AwaitSettingTextInPosition(74, 2 + darkLevel, 9);
+    AwaitSettingTextInPosition(74, 2 + darkLevel, COLOR_MILD);
     printf("■");
 }
 
@@ -444,7 +444,7 @@ void downDrawDarkenLevel() {
  * @param action 类型文本
  */
 void showRandomActionHint(char *action) {
-    AwaitSettingTextInPosition(4, 1, 7);
+    AwaitSettingTextInPosition(4, 1, COLOR_MAIN_TEXT);
     printf("%-24s", action);
 }
 
@@ -577,7 +577,7 @@ void checkDarkenLevel() {
             }
             if (!eraseBlockRandomly()) {
                 score += beyondEnabled ? 25 : 100; //能消完也是个神仙了
-                AwaitSettingTextInPosition(5, 7, 8);
+                AwaitSettingTextInPosition(5, 7, COLOR_SUB_TEXT);
                 printScore(score);
             }
         }
@@ -588,9 +588,9 @@ void checkDarkenLevel() {
  * 输出存入的方格到对应ui区
  */
 void showSavedBlock() {
-    SetTextInPosition("  存入的方块  ", 80, 18, 7);
-    SetTextInPosition("              ", 80, 22, 8);
-    SetTextInPosition("              ", 80, 24, 8);
+    SetTextInPosition("  存入的方块  ", 80, 18, COLOR_MAIN_TEXT);
+    SetTextInPosition("              ", 80, 22, COLOR_SUB_TEXT);
+    SetTextInPosition("              ", 80, 24, COLOR_SUB_TEXT);
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | blocks[savedBlock].color + 3);
     for (int i = 0; i < 4; i++) {
         MoveCursor(84, 21 + i);

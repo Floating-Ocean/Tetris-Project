@@ -15,6 +15,7 @@
  */
 
 #include "Structs.h"
+#include "Colors.h"
 
 #ifndef TETRIS_METHODS_H
 #define TETRIS_METHODS_H

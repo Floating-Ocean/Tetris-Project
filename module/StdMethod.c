@@ -44,14 +44,21 @@ void shuffleIntArray(int *array, int n) {
  * @param greet 存储问候语的地址
  */
 void getCurrentGreeting(char *greet) {
+    char *greets[5][3] = {
+            "早上好呀", "Hey, 早上好", "呼呼~ 早上了呢",
+            "中午好", "午安", "12点了",
+            "下午哩", "下午好呐", "又到下午力",
+            "晚上好呀", "又到晚上咯", "又在晚上看到你力",
+            "不早了", "早点睡呀", "呼呼~好困呐"};
     SYSTEMTIME systemTime;
     GetLocalTime(&systemTime);
-    int hour = systemTime.wHour;
-    if (hour >= 6 && hour <= 11) strcpy(greet, "早上好");
-    else if (hour == 12) strcpy(greet, "中午好");
-    else if (hour >= 13 && hour <= 16) strcpy(greet, "下午好");
-    else if (hour >= 17 && hour <= 23) strcpy(greet, "晚上好");
-    else strcpy(greet, "早点睡");
+    int hour = systemTime.wHour, index = 4;
+    if (hour >= 6 && hour <= 11) index = 0;
+    else if (hour == 12) index = 1;
+    else if (hour >= 13 && hour <= 16) index = 2;
+    else if (hour >= 17 && hour <= 23) index = 3;
+    srand(time(NULL)); //初始化随机数种子
+    strcpy(greet, greets[index][randBetween(0, 2)]);
 }
 
 /**

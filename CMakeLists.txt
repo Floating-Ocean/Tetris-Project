@@ -3,7 +3,7 @@ project(Tetris C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(Tetris icon/app-icon.o main.c module/Property.c module/Console.c module/File.c module/StdMethod.c module/Block.c collect/Structs.h module/Game.c module/Timer.c collect/Collection.h module/Font.c module/ThemeCtrl.c)
+add_executable(Tetris icon/app-icon.o main.c module/Property.c module/Console.c module/File.c module/StdMethod.c module/Block.c collect/Structs.h module/Game.c module/Timer.c collect/Collection.h module/Font.c module/ThemeCtrl.c collect/Colors.h)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)

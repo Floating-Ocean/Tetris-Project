@@ -17,8 +17,8 @@
 #include "collect/Collection.h"
 
 //-----版本控制-----
-const char *versionName = "2.1.2";
-const char *versionNameFull = "2.1.2.221216";
+const char *versionName = "2.1.3";
+const char *versionNameFull = "2.1.3.221219";
 
 //-----常量区-----
 const int DIRECTION_LEFT = -1, DIRECTION_RIGHT = 1, DIRECTION_DOWN = 0;
@@ -96,10 +96,10 @@ void showStartPage() {
            "               Version %s\n\n\n\n"
            "          Copyright ©2022 Floating Ocean.\n"
            "                All Rights Reserved.", versionNameFull);
-    while (true) //等待切换主题重开
+    while (true) {//等待切换主题重开
         if (kbhit()) {
             int input = getch();
-            if (input == 116) { //T键切换主题
+            if (input == 84 || input == 116) { //T键切换主题
                 int themeRange = queryDB("TetrisSetting", "ImportedTheme") ? 2 : 1,
                         oldTheme = queryDB("TetrisSetting", "ThemeType"),
                         newTheme = oldTheme + 1 > themeRange ? 0 : oldTheme + 1;
@@ -112,6 +112,7 @@ void showStartPage() {
             } else if (input == 27) return; //按esc退出游戏
             else break;
         }
+    }
     showWelcomePage();
 }
 

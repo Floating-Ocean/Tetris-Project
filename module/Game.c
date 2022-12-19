@@ -28,33 +28,33 @@ void endGame(bool force) {
                             (removedLines >= 25 || (removedLines >= 10 && score >= 150)); //引入一个强制挑战模式成功的逻辑
     SetTextInPosition(force ? "  游戏被终止  " :
                       (challengeModeEnabled ? (challengeComplete ? "  挑战成功!  " : "  挑战失败.  ")
-                                            : "  你寄了嘞！  "), 80, 5, 7);
-    if (challengeModeEnabled) animateDarkenCover(N, 1, challengeComplete ? 11 : 10); //成功为绿，失败为红
-    else animateDarkenCover(N, darkLevel + 1, force ? 12 : 10); //做一个变成黄条的动画
+                                            : "  你寄了嘞！  "), 80, 5, COLOR_MAIN_TEXT);
+    if (challengeModeEnabled) animateDarkenCover(N, 1, challengeComplete ? COLOR_PASS : COLOR_FAULT); //成功为绿，失败为红
+    else animateDarkenCover(N, darkLevel + 1, force ? COLOR_WARN : COLOR_FAULT); //做一个变成黄条的动画
     for (int i = 0; i < 4; i++) {
         MoveCursor(84, 7 + i);
         for (int j = 0; j < 4; j++) printf("  ");
     }
-    SetTextInPosition("  按空格重开 ", 80, 9, 7);
+    SetTextInPosition("  按空格重开 ", 80, 9, COLOR_MAIN_TEXT);
     if (challengeModeEnabled) {
         if (force || !challengeComplete) { //挑战失败不计入成绩，终止游戏视为挑战失败
-            SetTextInPosition("             ", 5, 11, 7);
-            SetTextInPosition("   分数不计入 ", 5, 12, 7);
-            SetTextInPosition("           ", 5, 13, 7);
+            SetTextInPosition("             ", 5, 11, COLOR_MAIN_TEXT);
+            SetTextInPosition("   分数不计入 ", 5, 12, COLOR_MAIN_TEXT);
+            SetTextInPosition("           ", 5, 13, COLOR_MAIN_TEXT);
         } else {
             if (queryDB("TetrisData", "ChallengeBestRecord") < score) {
                 insertDB("TetrisData", "ChallengeBestRecord", score);
-                SetTextInPosition("             ", 5, 11, 7);
-                SetTextInPosition("    NEW BEST   ", 5, 12, 7);
-                SetTextInPosition("           ", 5, 13, 7);
+                SetTextInPosition("             ", 5, 11, COLOR_MAIN_TEXT);
+                SetTextInPosition("    NEW BEST   ", 5, 12, COLOR_MAIN_TEXT);
+                SetTextInPosition("           ", 5, 13, COLOR_MAIN_TEXT);
             }
         }
     } else {
         if (queryDB("TetrisData", "BestRecord") < score) {
             insertDB("TetrisData", "BestRecord", score);
-            SetTextInPosition("             ", 5, 11, 7);
-            SetTextInPosition("    NEW BEST   ", 5, 12, 7);
-            SetTextInPosition("           ", 5, 13, 7);
+            SetTextInPosition("             ", 5, 11, COLOR_MAIN_TEXT);
+            SetTextInPosition("    NEW BEST   ", 5, 12, COLOR_MAIN_TEXT);
+            SetTextInPosition("           ", 5, 13, COLOR_MAIN_TEXT);
         }
     }
     challengeModeEnabled = challengeComplete = beyondEnabled = false;
@@ -87,9 +87,9 @@ void showGreetings() {
                              "不存白不存", "这里是那里", "25 Kill！", "方可超越未知", "GitHub？", "一瞬间就崩力",
                              "叠罗汉呢??", "旋转四分钟~", "我要金克拉!", "s∞n...", "啥也没报。"};
     int index = randBetween(0, 35);
-    SetTextInPosition(greetings01[index], 8, 20, 7);
-    SetTextInPosition(greetings02[index], 8, 22, 7);
-    SetTextInPosition("From Ocean", 8, 25, 8);
+    SetTextInPosition(greetings01[index], 8, 20, COLOR_MAIN_TEXT);
+    SetTextInPosition(greetings02[index], 8, 22, COLOR_MAIN_TEXT);
+    SetTextInPosition("From Ocean", 8, 25, COLOR_SUB_TEXT);
 }
 
 /**
@@ -155,7 +155,7 @@ void startGame() {
                         sprintf(curTitle, "In Game    %s Mode    Paused",
                                 beyondEnabled ? "BYD" : currentGameMode.modeName); //标题显示暂停
                         refreshTitleState(curTitle);
-                        animateDarkenCover(N, darkLevel + 1, 12); //做一个变成黄条的动画
+                        animateDarkenCover(N, darkLevel + 1, COLOR_WARN); //做一个变成黄条的动画
                         bool awaitInside = false;
                         while (true) {
                             if (kbhit()) {
@@ -180,8 +180,8 @@ void startGame() {
                             Sleep(10);
                             turn++;
                         }
-                        animateDarkenCover(N, darkLevel + 1, 7);
-                        SetTextInPosition("  下一个方块  ", 80, 5, 7);
+                        animateDarkenCover(N, darkLevel + 1, COLOR_MAIN_TEXT);
+                        SetTextInPosition("  下一个方块  ", 80, 5, COLOR_MAIN_TEXT);
                         char oldTitle[35];
                         sprintf(oldTitle, "In Game    %s Mode",
                                 beyondEnabled ? "BYD" : currentGameMode.modeName); //恢复标题

@@ -51,7 +51,7 @@ void printOne(int index, int textColor, int borderColor, char **text) {
 void showCurrentMode(char **text, GameMode mode, int color) {
     currentGameMode = mode;
     if (!beyondEnabled) printOne(mode.mode, color, color, text);
-    AwaitSettingTextInPosition(5, 2, 7);
+    AwaitSettingTextInPosition(5, 2, COLOR_MAIN_TEXT);
     printf("%s%s%s", "当前选中游戏模式：  ",
            beyondEnabled ? "BYD" : (mode.mode == 0x00 ? "EZ" : mode.mode == 0x01 ? "HD" : "IN"),
            " Mode   按空格键继续.");
@@ -61,7 +61,7 @@ void showCurrentMode(char **text, GameMode mode, int color) {
  * 未选中，恢复原标题
  */
 void recoverTitle() {
-    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, 7);
+    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
 }
 
 /**
@@ -71,12 +71,12 @@ void noticeChallengeEnable() {
     system("cls & mode con cols=90 lines=20");
     PlaceWindowCentral();
     refreshTitleState("Challenge Mode Notification");
-    SetTextInPosition(" — Challenge Mode Enabled — ", 29, 4, 10);
-    SetTextInPosition("本模式下所有难度惩罚次数", 24, 10, 7);
-    SetTextInPosition("3次", 48, 10, 12);
-    SetTextInPosition("判定", 51, 10, 7);
-    SetTextInPosition("游戏失败", 55, 10, 10);
-    SetTextInPosition("按 任 意 键 继 续", 36, 14, 7);
+    SetTextInPosition(" — Challenge Mode Enabled — ", 29, 4, COLOR_FAULT);
+    SetTextInPosition("本模式下所有难度惩罚次数", 24, 10, COLOR_MAIN_TEXT);
+    SetTextInPosition("3次", 48, 10, COLOR_WARN);
+    SetTextInPosition("判定", 51, 10, COLOR_MAIN_TEXT);
+    SetTextInPosition("游戏失败", 55, 10, COLOR_FAULT);
+    SetTextInPosition("按 任 意 键 继 续", 36, 14, COLOR_MAIN_TEXT);
     system("pause > nul");
     challengeModeEnabled = true;
     showSelectView();
@@ -89,13 +89,13 @@ bool showSelectView() {
     system("cls & mode con cols=82 lines=29");
     PlaceWindowCentral();
     refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
-    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, 7);
+    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
     char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除最后三行内的几个格子."};
     char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除最后十行内的多个格子."};
     char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机效果，游戏无法暂停."};
-    printOne(0, 8, 9, ez);
-    printOne(1, 8, 9, hd);
-    printOne(2, 8, 9, in);
+    printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+    printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+    printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
     bool selected = false, confirm = false;
     int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13}, currentChallengeInputIndex = -1;
     int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77,
@@ -145,51 +145,51 @@ bool showSelectView() {
                 case 101: //E
                     if (selected) {
                         if (currentGameMode.mode == MODE_EZ.mode) {
-                            printOne(0, 8, 9, ez);
+                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
                             selected = false;
                             recoverTitle();
                         } else {
-                            printOne(1, 8, 9, hd);
-                            printOne(2, 8, 9, in);
-                            showCurrentMode(ez, MODE_EZ, 11);
+                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            showCurrentMode(ez, MODE_EZ, COLOR_PASS);
                         }
                     } else {
                         selected = true;
-                        showCurrentMode(ez, MODE_EZ, 11);
+                        showCurrentMode(ez, MODE_EZ, COLOR_PASS);
                     }
                     break;
                 case 72:
                 case 104: //H
                     if (selected) {
                         if (currentGameMode.mode == MODE_HD.mode) {
-                            printOne(1, 8, 9, hd);
+                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
                             selected = false;
                             recoverTitle();
                         } else {
-                            printOne(0, 8, 9, ez);
-                            printOne(2, 8, 9, in);
-                            showCurrentMode(hd, MODE_HD, 12);
+                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            showCurrentMode(hd, MODE_HD, COLOR_WARN);
                         }
                     } else {
                         selected = true;
-                        showCurrentMode(hd, MODE_HD, 12);
+                        showCurrentMode(hd, MODE_HD, COLOR_WARN);
                     }
                     break;
                 case 73:
                 case 105: //I
                     if (selected) {
                         if (currentGameMode.mode == MODE_IN.mode) {
-                            printOne(2, 8, 9, in);
+                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
                             selected = false;
                             recoverTitle();
                         } else {
-                            printOne(0, 8, 9, ez);
-                            printOne(1, 8, 9, hd);
-                            showCurrentMode(in, MODE_IN, 10);
+                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            showCurrentMode(in, MODE_IN, COLOR_FAULT);
                         }
                     } else {
                         selected = true;
-                        showCurrentMode(in, MODE_IN, 10);
+                        showCurrentMode(in, MODE_IN, COLOR_FAULT);
                     }
                     break;
                 case 32: //决定!
@@ -206,15 +206,15 @@ bool showBeyondSelectView() {
     system("cls & mode con cols=82 lines=37");
     PlaceWindowCentral();
     refreshTitleState("Inner Mode Choosing    Challenge Mode");
-    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, 7);
+    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
     char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除最后三行内的几个格子."};
     char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除最后十行内的多个格子."};
     char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机效果，游戏无法暂停."};
     char *byd[2] = {"B   Beyond Mode", "    在Insane Mode的基础上，消行后进度条只恢复较少的值."};
-    printOne(0, 8, 9, ez);
-    printOne(1, 8, 9, hd);
-    printOne(2, 8, 9, in);
-    printOne(3, 8, 9, byd);
+    printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+    printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+    printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+    printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
     bool selected = false, confirm = false, awaitDirectionInput = false;
     while (!confirm) { //未决定难度，等待输入
         if (kbhit()) {
@@ -248,92 +248,92 @@ bool showBeyondSelectView() {
                 case 101: //E
                     if (selected) {
                         if (currentGameMode.mode == MODE_EZ.mode) {
-                            printOne(0, 8, 9, ez);
-                            printOne(3, 8, 9, byd);
+                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = false;
-                            printOne(1, 8, 9, hd);
-                            printOne(2, 8, 9, in);
-                            printOne(3, 8, 9, byd);
-                            showCurrentMode(ez, MODE_EZ, 11);
+                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            showCurrentMode(ez, MODE_EZ, COLOR_PASS);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = false;
-                        showCurrentMode(ez, MODE_EZ, 11);
-                        printOne(3, 8, 9, byd);
+                        showCurrentMode(ez, MODE_EZ, COLOR_PASS);
+                        printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                     }
                     break;
                 case 72:
                 case 104: //H
                     if (selected) {
                         if (currentGameMode.mode == MODE_HD.mode) {
-                            printOne(1, 8, 9, hd);
-                            printOne(3, 8, 9, byd);
+                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = false;
-                            printOne(0, 8, 9, ez);
-                            printOne(2, 8, 9, in);
-                            printOne(3, 8, 9, byd);
-                            showCurrentMode(hd, MODE_HD, 12);
+                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            showCurrentMode(hd, MODE_HD, COLOR_WARN);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = false;
-                        showCurrentMode(hd, MODE_HD, 12);
-                        printOne(3, 8, 9, byd);
+                        showCurrentMode(hd, MODE_HD, COLOR_WARN);
+                        printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                     }
                     break;
                 case 73:
                 case 105: //I
                     if (selected) {
                         if (!beyondEnabled && currentGameMode.mode == MODE_IN.mode) {
-                            printOne(2, 8, 9, in);
-                            printOne(3, 8, 9, byd);
+                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = false;
-                            printOne(0, 8, 9, ez);
-                            printOne(1, 8, 9, hd);
-                            printOne(3, 8, 9, byd);
-                            showCurrentMode(in, MODE_IN, 10);
+                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            showCurrentMode(in, MODE_IN, COLOR_FAULT);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = false;
-                        showCurrentMode(in, MODE_IN, 10);
-                        printOne(3, 8, 9, byd);
+                        showCurrentMode(in, MODE_IN, COLOR_FAULT);
+                        printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                     }
                     break;
                 case 66:
                 case 98: //B
                     if (selected) {
                         if (beyondEnabled) {
-                            printOne(3, 8, 9, byd);
+                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = true;
-                            printOne(0, 8, 9, ez);
-                            printOne(1, 8, 9, hd);
-                            printOne(2, 8, 9, in);
-                            printOne(3, 10, 10, byd);
-                            showCurrentMode(in, MODE_IN, 10);
+                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            printOne(3, COLOR_FAULT, COLOR_FAULT, byd);
+                            showCurrentMode(in, MODE_IN, COLOR_FAULT);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = true;
-                        printOne(3, 10, 10, byd);
-                        showCurrentMode(in, MODE_IN, 10);
+                        printOne(3, COLOR_FAULT, COLOR_FAULT, byd);
+                        showCurrentMode(in, MODE_IN, COLOR_FAULT);
                     }
                     break;
                 case 32: //决定!
@@ -360,10 +360,10 @@ int calculateLevel() {
  * 刷新状态查看
  */
 void refreshPreview() {
-    AwaitSettingTextInPosition(4, 1, 8);
+    AwaitSettingTextInPosition(4, 1, COLOR_SUB_TEXT);
     printf("                                                                               ");
     if (!enablePreview) return;
-    AwaitSettingTextInPosition(4, 1, 8);
+    AwaitSettingTextInPosition(4, 1, COLOR_SUB_TEXT);
     printf("Difficulty:  %s. %d    Move Per Second:  %.02f    Removed Lines:  %d",
            beyondEnabled ? "BYD" : currentGameMode.modeName,
            (int) ((beyondEnabled ? 1.5f : 1.0f) * (float) calculateLevel()),

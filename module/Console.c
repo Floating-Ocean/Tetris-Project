@@ -78,7 +78,7 @@ bool initializeFont() {
     cfi.dwFontSize.Y = 20;  //设置字体大小
     cfi.FontFamily = FF_DONTCARE;
     cfi.FontWeight = FW_NORMAL; //字体粗细 FW_BOLD
-    wcscpy_s(cfi.FaceName, 32, L"Sarasa Mono SC");  //设置字体，必须是控制台已有的，安装了Windows Terminal的设备自带字体Cascadia Mono
+    wcscpy_s(cfi.FaceName, 32, L"Sarasa Mono SC");  //设置字体
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
     return true;
 }
@@ -111,36 +111,36 @@ void initializeColor() {
                 RGB(238, 238, 238), //#ffeeeeee 白色 0
                 RGB(238, 238, 238), //#ffeeeeee 白色 1
                 RGB(238, 238, 238), //#ffeeeeee 白色 2
-                RGB(173, 20, 87), //#ffad1457 粉色 3
-                RGB(106, 27, 154), //#ff6a1b9a 紫色 4
-                RGB(40, 53, 154), //#ff28359a 靛青 5
-                RGB(2, 119, 189), //#ff0277bd 蓝色 6
-                RGB(0, 105, 92), //#ff00695c青色 7
-                RGB(158, 157, 36), //#ff827717 柠檬 8
-                RGB(239, 108, 0), //#ffef6c00 橙色 9
-                RGB(12, 12, 12), //#ff121212 深黑色 10
-                RGB(66, 66, 66), //#ff424242 灰色 11
-                RGB(189, 189, 189), //#ffbdbdbd 浅灰色 12
-                RGB(229, 57, 53), //#ffe53935 红色 13
-                RGB(67, 160, 71), //#ff43a047 绿色 14
-                RGB(255, 160, 0) //#ffffa000 琥珀色 15
+                RGB(173, 20, 87), //#ffad1457 粉色 0
+                RGB(106, 27, 154), //#ff6a1b9a 紫色 1
+                RGB(40, 53, 154), //#ff28359a 靛青 2
+                RGB(2, 119, 189), //#ff0277bd 蓝色 3
+                RGB(0, 105, 92), //#ff00695c青色 4
+                RGB(158, 157, 36), //#ff827717 柠檬 5
+                RGB(239, 108, 0), //#ffef6c00 橙色 6
+                RGB(12, 12, 12), //#ff121212 深黑色 7
+                RGB(66, 66, 66), //#ff424242 灰色 8
+                RGB(189, 189, 189), //#ffbdbdbd 浅灰色 9
+                RGB(229, 57, 53), //#ffe53935 红色 10
+                RGB(67, 160, 71), //#ff43a047 绿色 11
+                RGB(255, 160, 0) //#ffffa000 琥珀色 12
         }, darkColors[16] = {
                 RGB(12, 12, 12), //#ff121212 黑色 0
                 RGB(12, 12, 12), //#ff121212 黑色 1
                 RGB(12, 12, 12), //#ff121212 黑色 2
-                RGB(236, 64, 122), //#ffec407a 粉色 3
-                RGB(171, 71, 188), //#ffab47bc 紫色 4
-                RGB(121, 134, 203), //#ff7986cb 靛青 5
-                RGB(41, 182, 246), //#ff29b6f6 蓝色 6
-                RGB(77, 182, 172), //#ff4db6ac青色 7
-                RGB(212, 225, 87), //#ffd4e157 柠檬 8
-                RGB(255, 167, 38), //#ffffa726 橙色 9
-                RGB(250, 250, 250), //#fffafafa 亮白色 10
-                RGB(189, 189, 189), //#ffbdbdbd 浅灰色 11
-                RGB(66, 66, 66), //#ff424242 深灰色 12
-                RGB(239, 83, 80), //#ffef5350 红色 13
-                RGB(76, 175, 80), //#ff4caf50 绿色 14
-                RGB(255, 202, 40) //#ffffca28 琥珀色 15
+                RGB(236, 64, 122), //#ffec407a 粉色 0
+                RGB(171, 71, 188), //#ffab47bc 紫色 1
+                RGB(121, 134, 203), //#ff7986cb 靛青 2
+                RGB(41, 182, 246), //#ff29b6f6 蓝色 3
+                RGB(77, 182, 172), //#ff4db6ac青色 4
+                RGB(212, 225, 87), //#ffd4e157 柠檬 5
+                RGB(255, 167, 38), //#ffffa726 橙色 6
+                RGB(250, 250, 250), //#fffafafa 亮白色 7
+                RGB(189, 189, 189), //#ffbdbdbd 浅灰色 8
+                RGB(66, 66, 66), //#ff424242 深灰色 9
+                RGB(239, 83, 80), //#ffef5350 红色 10
+                RGB(76, 175, 80), //#ff4caf50 绿色 11
+                RGB(255, 202, 40) //#ffffca28 琥珀色 12
         };
         memcpy(csbi.ColorTable, queryDB("TetrisSetting", "ThemeType") ? lightColors : darkColors,
                queryDB("TetrisSetting", "ThemeType") ? sizeof lightColors : sizeof darkColors); //把颜色配置拷进去
