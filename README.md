@@ -5,7 +5,7 @@ A project on adding new features to the traditional game Tetris with C program l
 
 ## 下载游戏
 
-[点我](https://github.com/Floating-Ocean/Tetris-Project/releases/)跳转到发行页下载。
+[点我跳转到发行页下载](https://github.com/Floating-Ocean/Tetris-Project/releases/)。
 
 请一并下载ttf和exe文件，并在打开exe前打开ttf文件并安装它。
 
