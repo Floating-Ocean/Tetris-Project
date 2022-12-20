@@ -122,7 +122,7 @@ void startGame() {
             break;
         }
         extractNextBlock();
-        bool awaitDirectionInput = false;
+        bool awaitDirectionInput = false, innerEnded = false;
         while (true) { //使用线程实现可靠的Timer
             pthread_t thread;
             pthread_create(&thread, NULL, timeThread, NULL);
@@ -136,12 +136,13 @@ void startGame() {
                 }
                 if (awaitDirectionInput) {
                     awaitDirectionInput = false;
-                    if (input == 72) rotateBlock(); //key up
-                    else if (input == 75) moveBlock(DIRECTION_LEFT); //key left
-                    else if (input == 77) moveBlock(DIRECTION_RIGHT); //key right
+                    if (input == 72) rotateBlock(&innerEnded); //key up
+                    else if (input == 75) moveBlock(DIRECTION_LEFT, &innerEnded); //key left
+                    else if (input == 77) moveBlock(DIRECTION_RIGHT, &innerEnded); //key right
                     else if (input == 80) { //key down
-                        if (!moveBlock(DIRECTION_DOWN)) break;
+                        if (!moveBlock(DIRECTION_DOWN, &innerEnded)) break;
                     }
+                    if(innerEnded) break;
                 } else {
                     if (input == 82 || input == 114 || input == 27) { //输入大小写R or esc: 重开
                         forceEndGame = true;
@@ -197,10 +198,13 @@ void startGame() {
                     }
                 }
             } else {
-                if (!moveBlock(DIRECTION_DOWN)) break;
+                if (!moveBlock(DIRECTION_DOWN, &innerEnded)) break;
             }
         }
-        if (forceEndGame) break;
+        if (innerEnded || forceEndGame){ //修复forceEndGame在下一次游戏中被标记为false的bug
+            forceEndGame = true;
+            break;
+        }
     }
     if (!forceEndGame) startGame();
 }

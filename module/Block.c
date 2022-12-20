@@ -268,7 +268,7 @@ void hideBlock(int rotate) {
  * @param direction 方向
  * @return 是否移动成功
  */
-bool moveBlock(int direction) {
+bool moveBlock(int direction, bool *ended) {
     if (!checkCanMove(direction)) return false; //检查是否可移动
     hideBlock(nowFalling.rotate);
     clearBlock(nowFalling.rotate); //清空方块
@@ -276,7 +276,7 @@ bool moveBlock(int direction) {
     else nowFalling.point[1] += direction;
     insertBlock(nowFalling.rotate);
     showBlock(nowFalling.rotate); //输出移动后的状态
-    checkDarkenLevel(); //检查Darken值
+    checkDarkenLevel(ended); //检查Darken值
     return true;
 }
 
@@ -284,7 +284,7 @@ bool moveBlock(int direction) {
  * 尝试顺时针旋转方块
  * @return 是否旋转成功
  */
-bool rotateBlock() {
+bool rotateBlock(bool *ended) {
     clearBlock(nowFalling.rotate);
     int preRotate = nowFalling.rotate;
     nowFalling.rotate = (nowFalling.rotate + 1) % 4; //4次旋转回到起始
@@ -293,7 +293,7 @@ bool rotateBlock() {
         hideBlock(preRotate);
         insertBlock(nowFalling.rotate);
         showBlock(nowFalling.rotate);
-        checkDarkenLevel();
+        checkDarkenLevel(ended);
     } else { //复位
         nowFalling.rotate = preRotate;
         insertBlock(preRotate);
@@ -551,7 +551,7 @@ void changeSpeedRandomly() {
 /**
  * 检查是否需要扣除Darken值
  */
-void checkDarkenLevel() {
+void checkDarkenLevel(bool *ended) {
     double increase[3] = {0.16, 0.32, 0.64};
     if (trialMove == max(2, (int) (18 - (double) score / (100 * increase[currentGameMode.mode])))) { //达到阈值
         trialMove = 0;
@@ -562,6 +562,7 @@ void checkDarkenLevel() {
                 challengeModeFault++;
                 if (challengeModeFault >= 3) { //挑战失败
                     forceEndGame = true;
+                    *ended = true;
                     endGame(false);
                     return;
                 }

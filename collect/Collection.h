@@ -86,9 +86,9 @@ extern void showBlock(int rotate);
 
 extern void hideBlock(int rotate);
 
-extern bool moveBlock(int direction);
+extern bool moveBlock(int direction, bool *ended);
 
-extern bool rotateBlock();
+extern bool rotateBlock(bool *ended);
 
 extern void extractNextBlock();
 
@@ -112,7 +112,7 @@ extern bool exchangeRowRandomly();
 
 extern void changeSpeedRandomly();
 
-extern void checkDarkenLevel();
+extern void checkDarkenLevel(bool *ended);
 
 extern void showSavedBlock();
 
