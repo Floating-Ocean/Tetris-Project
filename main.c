@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Floating Ocean
+ * Copyright (C) 2022-2023 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ void showStartPage() {
            "           古 典 游 戏     创 新 玩 法\n\n\n\n\n\n\n\n\n"
            "               点 按 任 意 键 继 续\n\n\n\n\n\n\n\n"
            "               Version %s\n\n\n\n"
-           "          Copyright ©2022 Floating Ocean.\n"
+           "       Copyright ©2022-2023 Floating Ocean.\n"
            "                All Rights Reserved.", versionNameFull);
     while (true) {//等待切换主题重开
         if (kbhit()) {
@@ -137,7 +137,7 @@ void showWelcomePage() {
            "    5.在传统俄罗斯方块游戏中能做到的，这里应该都可以做到.\n\n"
            "    更多游戏介绍请移步 floating-ocean.github.io/tetrisproj/ \n\n\n"
            "    点按键盘任意键继续.\n\n\n\n"
-           "    ©2022 Floating Ocean.\n"
+           "    ©2022-2023 Floating Ocean.\n"
            "    All Rights Reserved.", greeting, userName);
     while (true) { //等待按esc或继续游戏
         if (kbhit()) {
