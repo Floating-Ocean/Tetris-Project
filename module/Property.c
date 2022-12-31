@@ -90,8 +90,8 @@ bool showSelectView() {
     PlaceWindowCentral();
     refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
     SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
-    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除最后三行内的几个格子."};
-    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除最后十行内的多个格子."};
+    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除8个有效行内的几个格子."};
+    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除16个有消行内的多个格子."};
     char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机效果，游戏无法暂停."};
     printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
     printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
