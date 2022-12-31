@@ -44,7 +44,7 @@ extern int score, darkLevel, trialMove, removedLines;
 extern int challengeModeFault;
 extern double speedMultiply;
 extern bool enablePreview, hidePreviewTemporarily, challengeModeEnabled, beyondEnabled, challengeComplete;
-extern bool forceEndGame;
+extern bool forceEndGame, mirrorEnabled;
 extern DWORD speedMultiplyEnabledTime;
 extern char **inputArgument;
 
@@ -105,6 +105,8 @@ extern void recoverDarkenLevel(bool fail);
 extern void downDrawDarkenLevel();
 
 extern void showRandomActionHint(char *action);
+
+extern void mirrorTotally();
 
 extern bool eraseBlockRandomly();
 

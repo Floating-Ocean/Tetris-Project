@@ -31,7 +31,8 @@ void *timeThread(void *args) {
         timer.previousTimeMills = timer.currentTimeMills - delta;
     }
     while (true) {
-        if (speedMultiply != 1.0 && GetTickCount() - speedMultiplyEnabledTime >= 10000) {
+        //beyond加速模式持续18秒，其余变速持续9秒
+        if (speedMultiply != 1.0 && GetTickCount() - speedMultiplyEnabledTime >= (beyondEnabled && speedMultiply > 1 ? 18000 : 9000)) {
             speedMultiply = 1.0; //恢复Speed
             if (enablePreview) refreshPreview();
         }

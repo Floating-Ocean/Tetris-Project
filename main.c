@@ -17,8 +17,8 @@
 #include "collect/Collection.h"
 
 //-----版本控制-----
-const char *versionName = "2.1.4";
-const char *versionNameFull = "2.1.4.221220";
+const char *versionName = "2.2.0";
+const char *versionNameFull = "2.2.0.230101";
 
 //-----常量区-----
 const int DIRECTION_LEFT = -1, DIRECTION_RIGHT = 1, DIRECTION_DOWN = 0;
@@ -35,7 +35,7 @@ int score = 0, darkLevel = 0, trialMove = 0, removedLines = 0;
 int challengeModeFault = 0;
 double speedMultiply = 1.0;
 bool enablePreview = false, hidePreviewTemporarily = false, challengeModeEnabled = false, beyondEnabled = false, challengeComplete = false;
-bool forceEndGame = false;
+bool forceEndGame = false, mirrorEnabled = false;
 DWORD speedMultiplyEnabledTime;
 char **inputArgument;
 

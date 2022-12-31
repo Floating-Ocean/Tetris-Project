@@ -221,7 +221,12 @@ void writeBlock(int rotate, int value) {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++) {
             if (now.data[rotate][i][j] == 1) {
-                AwaitSettingTextInPosition(26 + 2 * (nowFalling.point[1] + j), 3 + nowFalling.point[0] + i, now.color);
+                if (mirrorEnabled)
+                    AwaitSettingTextInPosition(26 + 2 * (23 - (nowFalling.point[1] + j)),
+                                               3 + 23 - (nowFalling.point[0] + i), now.color);
+                else
+                    AwaitSettingTextInPosition(26 + 2 * (nowFalling.point[1] + j),
+                                               3 + nowFalling.point[0] + i, now.color);
                 printf(value ? "■" : "  ");
             }
         }
@@ -355,14 +360,16 @@ void judgeLines() {
         else if (validLine[i].count == N) { //该行满行，消除下移
             for (int w = 0; w < N; w++) {
                 if (w % 2 == 0) Sleep(10);
-                AwaitSettingTextInPosition(26 + 2 * w, 3 + i, currentMap[i][w].color);
+                if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - w), 3 + 23 - i, currentMap[i][w].color);
+                else AwaitSettingTextInPosition(26 + 2 * w, 3 + i, currentMap[i][w].color);
                 printf("  ");
             }
             for (int p = i - 1; p >= startLine - 1; p--) {
                 validLine[p + 1] = validLine[p];
                 for (int w = 0; w < N; w++) {
                     currentMap[p + 1][w] = currentMap[p][w];
-                    AwaitSettingTextInPosition(26 + 2 * w, 4 + p, currentMap[p + 1][w].color);
+                    if(mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - w), 2 + 23 - p, currentMap[p + 1][w].color);
+                    else AwaitSettingTextInPosition(26 + 2 * w, 4 + p, currentMap[p + 1][w].color);
                     printf(currentMap[p + 1][w].state ? "■" : "  ");
                 }
             }
@@ -390,6 +397,7 @@ void judgeLines() {
             challengeComplete = true; //强制成功
             endGame(false);
         }
+        if(mirrorEnabled) mirrorTotally(); //消行成功就转回来
     }
 }
 
@@ -449,6 +457,39 @@ void showRandomActionHint(char *action) {
 }
 
 /**
+ * 将游玩页面水平&垂直翻转，持续至下一次消行
+ */
+void mirrorTotally() {
+    hidePreview(true);
+    showRandomActionHint("Gravity Mirrored!");
+    hideBlock(nowFalling.rotate);
+    for (int i = 0; i < N; i++) {
+        int cnt = 0;
+        for (int j = 0; j < N; j++) {
+            cnt += currentMap[i][j].state;
+            AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
+            printf("  ");
+        }
+        if(cnt > 0) Sleep(10);
+    }
+    mirrorEnabled = !mirrorEnabled;
+    for (int i = 0; i < N; i++) {
+        int cnt = 0;
+        for (int j = 0; j < N; j++) {
+            cnt += currentMap[i][j].state;
+            if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - j), 3 + 23 - i, currentMap[i][j].color);
+            else AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
+            printf(currentMap[i][j].state ? "■" : "  ");
+        }
+        if(cnt > 0) Sleep(10);
+    }
+    showBlock(nowFalling.rotate);
+    if (mirrorEnabled) recoverDarkenLevel(true); //恢复Darken值
+    showRandomActionHint("");
+    hidePreview(false);
+}
+
+/**
  * 随机消格
  * @return 是否消完格
  */
@@ -457,8 +498,8 @@ bool eraseBlockRandomly() {
     showRandomActionHint("Block Erased!");
     //找出所有符合条件的有效点
     int valid[N * N][2], cnt = 0, currentLine = N - 1, needLine =
-            currentGameMode.mode == MODE_EZ.mode ? 3 :
-            currentGameMode.mode == MODE_HD.mode ? 10 : N; //删格有效行数量  EZ: 3, HD: 10, In: 24
+            currentGameMode.mode == MODE_EZ.mode ? 8 :
+            currentGameMode.mode == MODE_HD.mode ? 16 : N; //删格有效行数量  EZ: 8, HD: 16, In: 24
     for (int j = 0; j < needLine; j++) {
         if (validLine[currentLine].count == 0) needLine = min(N, needLine + 3); //跳过无效行，直到边界为止
         else {
@@ -484,7 +525,8 @@ bool eraseBlockRandomly() {
         cnt--;
         currentMap[delY][delX].state = 0;
         currentMap[delY][delX].color = 15;
-        MoveCursor(26 + 2 * delX, 3 + delY);
+        if (mirrorEnabled) MoveCursor(26 + 2 * (23 - delX), 3 + 23 - delY);
+        else MoveCursor(26 + 2 * delX, 3 + delY);
         printf("  ");
     }
     showRandomActionHint("");
@@ -518,10 +560,12 @@ bool exchangeRowRandomly() {
                 currentMap[exchangeA][p].color == currentMap[exchangeB][p].color)
                 continue; //如果一模一样就没必要动画了
             Sleep(1);
-            AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeA, currentMap[exchangeA][p].color);
+            if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeA, currentMap[exchangeA][p].color);
+            else AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeA, currentMap[exchangeA][p].color);
             printf(currentMap[exchangeA][p].state ? "■" : "  ");
             Sleep(1);
-            AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeB, currentMap[exchangeB][p].color);
+            if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeB, currentMap[exchangeB][p].color);
+            else AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeB, currentMap[exchangeB][p].color);
             printf(currentMap[exchangeB][p].state ? "■" : "  ");
         }
         showRandomActionHint("");
@@ -540,8 +584,12 @@ void changeSpeedRandomly() {
     bool down = randBetween(0, 9) < 5;
     showRandomActionHint(down ? "Speed Down!" : "Speed Up!");
     recoverDarkenLevel(true); //恢复Darken值
-    speedMultiply = down ? (double) randBetween(1250, 1562) / 1000
-                         : (double) randBetween(250, 500) / 1000; //0.64~0.80, 2.00~4.00倍速，精度0.01
+    if (beyondEnabled)
+        speedMultiply = down ? (double) randBetween(1041, 1388) / 1000
+                             : (double) randBetween(156, 400) / 1000; //0.72~0.96, 2.50~6.40倍速，精度0.01
+    else
+        speedMultiply = down ? (double) randBetween(1250, 1562) / 1000
+                             : (double) randBetween(250, 500) / 1000; //0.64~0.80, 2.00~4.00倍速，精度0.01
     if (enablePreview) refreshPreview();
     speedMultiplyEnabledTime = GetTickCount();
     showRandomActionHint("");
@@ -571,7 +619,11 @@ void checkDarkenLevel(bool *ended) {
             if (currentGameMode.mode == MODE_IN.mode) {
                 int type = randBetween(0, 100);
                 if (type <= 30 && exchangeRowRandomly()) return;
-                if (type <= 60 || score >= 1000) { //防止刷分！！！！！
+                if(type <= 40 && !mirrorEnabled) {
+                    mirrorTotally();
+                    return;
+                }
+                if (type <= 40 && mirrorEnabled || type <= 60 || score >= 1000) { //防止刷分！！！！！
                     changeSpeedRandomly();
                     return;
                 }
