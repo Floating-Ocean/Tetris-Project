@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "../collect/Collection.h"
+#include "../../collect/Collection.h"
 
 /**
  * 结束游戏
@@ -57,7 +57,7 @@ void endGame(bool force) {
             SetTextInPosition("           ", 5, 13, COLOR_MAIN_TEXT);
         }
     }
-    challengeModeEnabled = challengeComplete = beyondEnabled = false;
+    challengeModeEnabled = challengeComplete = beyondEnabled = mirrorEnabled = false;
     while (true) {//等待按空格重开
         if (kbhit()) {
             int input = getch();
@@ -74,19 +74,20 @@ void endGame(bool force) {
  * 初始化并输出Greetings到对应ui区
  */
 void showGreetings() {
-    char *greet1[38] = {"我就知道,", "这里啊,", "消行消行~", "哎哎哎， ", "总会有种", "长按上键", "万物，尘埃.",
+    char *greet1[40] = {"我就知道,", "这里啊,", "消行消行~", "哎哎哎， ", "总会有种", "长按上键", "万物，尘埃.",
                         "EZ难度呢,", "HD难度啊,", "IN难度呀,", "翻 (低头)", "有没有可能", "有没有可能", "哎呀我丢",
                         "你干嘛~", "两只老虎", "这里是", "5YW9LStfLg==", "Challenge", "↑↑↓↓", "新的事物，",
                         "超越一切，", "你说这C语言", "哼 哼 哼", "你是一个一个", "存点吧孩子", "这里是，",
                         "Challenge~", "挑战未知，", "哪里更新游戏", "游戏这玩意儿", "你...搁这儿", "俄罗斯方块",
-                        "金克拉！", "Coming", "江源速报：", "Hello, ", "TETRIS"};
-    char *greet2[38] = {"你会看这里.", "什么都没有!", "GKD! 好兄弟.", "要寄了！！", "被坑的感觉.", "长条变风车.",
+                        "金克拉！", "Coming", "江源速报：", "Hello, ", "TETRIS!!!", "这不是很简单", "大家好我是"};
+    char *greet2[40] = {"你会看这里.", "什么都没有!", "GKD! 好兄弟.", "要寄了！！", "被坑的感觉.", "长条变风车.",
                         "尘埃落定吗?", "它不叫摁着.", "它不叫高清.", "它不叫里面.", "给你看啥呢?", "这是一句话.",
                         "你在看这里.", "咋还有空格.", "嘿嘿嘿呦", "爱跳舞~", "Greetings!", ".+-..---.-__",
                         "Type it.", "←←→→", "在未知处...", "创死凡人！", "咋这么难搞", "啊啊啊啊啊", "俄罗斯方块啊",
                         "不存白不存", "这里是那里", "25 Kill！", "方可超越未知", "GitHub？", "一瞬间就崩力",
-                        "叠罗汉呢??", "旋转四分钟~", "我要金克拉!", "s∞n...", "啥也没报。", "2022 + 1 !", "2IЯT∃T"};
-    int index = randBetween(0, 37);
+                        "叠罗汉呢??", "旋转四分钟~", "我要金克拉!", "soooooon!", "啥也没报。", "2022 + 1 !", "!!!2IЯT∃T",
+                        "手忙脚乱.jpg", "米浴说的道理"};
+    int index = randBetween(0, 39);
     SetTextInPosition(greet1[index], 8, 20, COLOR_MAIN_TEXT);
     SetTextInPosition(greet2[index], 8, 22, COLOR_MAIN_TEXT);
     SetTextInPosition("From Ocean", 8, 25, COLOR_SUB_TEXT);
@@ -142,14 +143,16 @@ void startGame() {
                     else if (input == 80) { //key down
                         if (!moveBlock(DIRECTION_DOWN, &innerEnded)) break;
                     }
-                    if(innerEnded) break;
+                    if (innerEnded) break;
                 } else {
                     if (input == 82 || input == 114 || input == 27) { //输入大小写R or esc: 重开
                         forceEndGame = true;
                         endGame(true);
                         break;
                     } else if (input == 75 || input == 107) { //输入大小写K: 暂停
-                        if (currentGameMode.mode == MODE_IN.mode) continue;
+                        if ((challengeModeEnabled && beyondEnabled) ||
+                            (!challengeModeEnabled && currentGameMode.mode == MODE_IN.mode))
+                            continue;
                         int turn = 0;
                         bool showingWhat = false;
                         char curTitle[35];

@@ -55,16 +55,12 @@ extern void showStartPage();
 
 extern void showWelcomePage();
 
-//方块 Block.c
+//方块 game/Block.c
 extern void setInData(int d[7][4][4][4]);
 
 extern void randomizeBlockColor();
 
 extern void initializeBlock();
-
-extern void printScore(int showScore);
-
-extern void initializeScore();
 
 extern void initializeSavedBlock();
 
@@ -96,15 +92,16 @@ extern bool appearBlock();
 
 extern void judgeLines();
 
-extern void animateDarkenCover(int down, int up, int color);
+extern void showSavedBlock();
 
-extern void animateDarkenRecover(int level, int color);
+extern void saveBlock();
 
-extern void recoverDarkenLevel(bool fail);
+//惩罚 game.Punishment.c
+extern void minusScore();
 
-extern void downDrawDarkenLevel();
+extern void insertBarrier();
 
-extern void showRandomActionHint(char *action);
+extern void mirrorPartially();
 
 extern void mirrorTotally();
 
@@ -116,11 +113,22 @@ extern void changeSpeedRandomly();
 
 extern void checkDarkenLevel(bool *ended);
 
-extern void showSavedBlock();
+extern void animateDarkenCover(int down, int up, int color);
 
-extern void saveBlock();
+extern void animateDarkenRecover(int level, int color);
 
-//控制台 Console.c
+extern void recoverDarkenLevel(bool fail);
+
+extern void downDrawDarkenLevel();
+
+extern void showRandomActionHint(char *action);
+
+//分数 game/Score.c
+extern void printScore(int showScore);
+
+extern void initializeScore();
+
+//控制台 util/Console.c
 extern void HideCursor();
 
 extern void MoveCursor(int x, int y);
@@ -141,7 +149,7 @@ extern void refreshTitleState(char *state);
 
 extern bool initializeConsole();
 
-//文件操作 File.c
+//文件操作 util/File.c
 extern void checkFolder();
 
 extern const char *getFileName();
@@ -150,14 +158,14 @@ extern int queryDB(char *container, char *key);
 
 extern void insertDB(char *container, char *key, int data);
 
-//游戏 Game.c
+//游戏 interface/Game.c
 extern void endGame(bool force);
 
 extern void showGreetings();
 
 extern void startGame();
 
-//属性 Property.c
+//属性 interface/Property.c
 extern void printOne(int index, int textColor, int borderColor, char **text);
 
 extern void showCurrentMode(char **text, GameMode mode, int color);
@@ -176,7 +184,7 @@ extern void refreshPreview();
 
 extern void hidePreview(bool hide);
 
-//基本函数 StdMethod.c
+//基本函数 util/StdMethod.c
 extern int randBetween(int x, int y);
 
 extern void shuffleIntArray(int *array, int n);
@@ -187,13 +195,13 @@ extern int hexToDec(char hex);
 
 extern COLORREF hexToRGB(char *hex);
 
-//计时器 Timer.c
+//计时器 util/Timer.c
 extern void *timeThread(void *args);
 
 extern bool whenBreakTimer(); //abstract -> Game.c
 
-//字体 Font.c
+//字体 util/Font.c
 extern bool checkFont();
 
-//主题控制 ThemeCtrl.c
+//主题控制 utilThemeCtrl.c
 extern bool importCustomTheme(char *file);

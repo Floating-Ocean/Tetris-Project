@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "../collect/Collection.h"
+#include "../../collect/Collection.h"
 
 /**
  * 导入自定义主题
@@ -23,7 +23,7 @@
 bool importCustomTheme(char *file) {
     //step1. 检查文件后缀
     int startIndex;
-    for (int i = 0; file[i] != '\0'; i++)if (file[i] == '\\') startIndex = i;
+    for (int i = 0; file[i] != '\0'; i++) if (file[i] == '\\') startIndex = i;
     for (int i = startIndex; file[i] != '\0'; i++) if (file[i] == '.') startIndex = i;
     if (strcmp(&file[startIndex + 1], "fotp") != 0) {
         printf("\n  主题文件格式错误.");
@@ -47,7 +47,7 @@ bool importCustomTheme(char *file) {
             return false;
         }
     }
-    printf("\n  你正在导入主题...\n\n\n  %s\n\n  %s\n\n  Published by %s\n\n\n  任意键导入主题.\n\n  若你不需要此主题，请按下键盘的Esc键以取消.",
+    printf("\n  Hey, 你正在导入主题!\n\n\n  来确认一下主题的信息吧~\n\n\n  %s\n\n  %s\n\n  Published by %s\n\n\n  任意键即可导入.\n\n  若你不需要此主题，请按下键盘的Esc键以取消.",
            title, description, publisher);
     while (true) //等待按esc或继续
         if (kbhit()) {

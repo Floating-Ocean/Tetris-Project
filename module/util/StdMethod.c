@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "../collect/Collection.h"
+#include "../../collect/Collection.h"
 
 /**
  * 在指定范围生成随机数

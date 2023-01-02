@@ -17,8 +17,8 @@
 #include "collect/Collection.h"
 
 //-----版本控制-----
-const char *versionName = "2.2.0";
-const char *versionNameFull = "2.2.0.230101";
+const char *versionName = "2.3.0";
+const char *versionNameFull = "2.3.0.230102";
 
 //-----常量区-----
 const int DIRECTION_LEFT = -1, DIRECTION_RIGHT = 1, DIRECTION_DOWN = 0;
@@ -94,7 +94,7 @@ void showStartPage() {
            "           古 典 游 戏     创 新 玩 法\n\n\n\n\n\n\n\n\n"
            "               点 按 任 意 键 继 续\n\n\n\n\n\n\n\n"
            "               Version %s\n\n\n\n"
-           "       Copyright ©2022-2023 Floating Ocean.\n"
+           "        Copyright ©2022-2023 Floating Ocean.\n"
            "                All Rights Reserved.", versionNameFull);
     while (true) {//等待切换主题重开
         if (kbhit()) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "../collect/Collection.h"
+#include "../../collect/Collection.h"
 
 //1.11改用Windows API，存入%localappdata%/Floating Ocean/Tetris/内
 

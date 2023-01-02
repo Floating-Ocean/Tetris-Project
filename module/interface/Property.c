@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "../collect/Collection.h"
+#include "../../collect/Collection.h"
 
 //三个难度
 GameMode MODE_EZ = {"EZ", 0x00, 500, 1},
@@ -92,7 +92,8 @@ bool showSelectView() {
     SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
     char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除8个有效行内的几个格子."};
     char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除16个有消行内的多个格子."};
-    char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机效果，游戏无法暂停."};
+    char *in[2] = {"I   Insane Mode", challengeModeEnabled ? "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."
+                                                           : "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏无法暂停."};
     printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
     printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
     printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
@@ -209,7 +210,7 @@ bool showBeyondSelectView() {
     SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
     char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除最后三行内的几个格子."};
     char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除最后十行内的多个格子."};
-    char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机效果，游戏无法暂停."};
+    char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."};
     char *byd[2] = {"B   Beyond Mode", "    在Insane Mode的基础上，消行后进度条只恢复较少的值."};
     printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
     printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
@@ -366,7 +367,7 @@ void refreshPreview() {
     AwaitSettingTextInPosition(4, 1, COLOR_SUB_TEXT);
     printf("Difficulty:  %s. %d    Move Per Second:  %.02f    Removed Lines:  %d",
            beyondEnabled ? "BYD" : currentGameMode.modeName,
-           (int) ((beyondEnabled ? 1.5f : 1.0f) * (float) calculateLevel()),
+           (int) ((mirrorEnabled ? 2.0f : 1.0f) * (beyondEnabled ? 1.5f : 1.0f) * (float) calculateLevel()),
            1000 / (double) currentGameMode.speed * (1 / speedMultiply), removedLines);
 }
 
