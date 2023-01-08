@@ -3,6 +3,8 @@ A project on adding new features to the traditional game Tetris with C program l
 
 基于C语言的传统俄罗斯方块游戏拓展。
 
+<a align="right" href="https://github.com/Floating-Ocean/Tetris-Project/search?l=c"><img src="https://img.shields.io/github/languages/top/Floating-Ocean/Tetris-Project?color=a3b3a3&label=C&style=flat"></a> <a align="right" href="https://github.com/Floating-Ocean/Tetris-Project/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Floating-Ocean/Tetris-Project?style=flat"></a> <a align="right" href="https://github.com/Floating-Ocean/Tetris-Project/releases/latest"><img src="https://img.shields.io/github/v/release/Floating-Ocean/Tetris-Project?include_prereleases&style=flat" alt="GitHub releases"></a> <a align="right" href="https://github.com/Floating-Ocean/Tetris-Project/releases"><img src="https://img.shields.io/github/downloads/Floating-Ocean/Tetris-Project/total.svg?style=flat" alt="GitHub releases"></a>
+
 ## 依赖
 
 为了更好地在控制台显示方块，游戏使用了第三方字体。
@@ -25,7 +27,7 @@ A project on adding new features to the traditional game Tetris with C program l
 
 ## 下载
 
-请前往[**本仓库的发行页**](https://github.com/Floating-Ocean/Tetris-Project/releases/)获取游戏的最新版。
+请前往[**本仓库的发行页**](https://github.com/Floating-Ocean/Tetris-Project/releases/latest/)获取游戏的最新版。
 
 若无法下载，请前往随仓库同步更新的[**百度云**](https://pan.baidu.com/s/1LGiRYZGzsW2wDbOfo934jg?pwd=ttpj)下载页。
 
@@ -33,7 +35,7 @@ A project on adding new features to the traditional game Tetris with C program l
 
 游戏支持自定义主题，你可以在发行页下载官方主题并按照文件内的提示安装它。
 
-## 写在后面
+## 后记
 
 作为本人C语言课程的实验作业，因个人技术力问题，代码并没有很简洁明了，望周知。
 
