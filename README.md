@@ -3,34 +3,38 @@ A project on adding new features to the traditional game Tetris with C program l
 
 基于C语言的传统俄罗斯方块游戏拓展。
 
-## 下载游戏
+## 依赖
 
-[点我跳转到发行页下载](https://github.com/Floating-Ocean/Tetris-Project/releases/)。
+为了更好地在控制台显示方块，游戏使用了第三方字体。
 
-请一并下载ttf和exe文件，并在打开exe前打开ttf文件并安装它。
+因此，在开始游戏前，请**确保已安装 Sarasa Mono SC 字体**。
 
-## 关于此游戏
+如需获取该**字体**，请[**点击这里下载**](https://github.com/Floating-Ocean/Tetris-Project/releases/download/v2.1.0/sarasa-mono-sc-regular.ttf)，谢谢。
 
-### 字体
+## 玩法
 
-游戏依赖于 Sarasa Mono SC 字体，该字体需自行安装。
+1.使用 ← → 键左右移动方块，↑ 键顺时针旋转方块，↓ 键加速下落；
 
-你可以在[本仓库的发行页](https://github.com/Floating-Ocean/Tetris-Project/releases/)下载，或者[点击这里下载](https://github.com/Floating-Ocean/Tetris-Project/releases/download/v2.1.0/sarasa-mono-sc-regular.ttf)。
+2.使用 R 键重新开始游戏，K 键暂停游戏，C 键存储方块，P键查看状态；
 
-### 主题
+3.消除一行后，会得到一定的分数，分数取决于连消数和游戏难度；
 
-游戏支持自定义主题，你可以下载官方主题并按照文件内的提示安装它。
+4.在界面左右侧**进度条**进度归零前未消行，将会按照游戏难度进行**惩罚**；
 
-### 介绍
+如需获取**详细游戏介绍**，请访问 [**Tetris Project - Introduction**](https://floating-ocean.github.io/tetrisproj/)，谢谢。
 
-所有游戏介绍均在 <https://floating-ocean.github.io/tetrisproj/> 内。
+## 下载
+
+请前往[**本仓库的发行页**](https://github.com/Floating-Ocean/Tetris-Project/releases/)获取游戏的最新版。
+
+若无法下载，请前往随仓库同步更新的[**百度云**](https://pan.baidu.com/s/1LGiRYZGzsW2wDbOfo934jg?pwd=ttpj)下载页。
+
+## 主题
+
+游戏支持自定义主题，你可以在发行页下载官方主题并按照文件内的提示安装它。
 
 ## 写在后面
 
-因本人C语言的技术力问题，代码并没有很简洁明了，望周知。
+作为本人C语言课程的实验作业，因个人技术力问题，代码并没有很简洁明了，望周知。
 
-玩得愉快。
-
-Best Regards,
-
-Floating Ocean.
+<p><small><br><br>玩得愉快!<br><br>Best Regards,<br>Floating Ocean.</small></p>
