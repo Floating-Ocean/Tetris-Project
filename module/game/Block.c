@@ -303,7 +303,7 @@ bool appearBlock() {
     nowFalling.index = nextBlock;
     nowFalling.rotate = nextRotate; //从上次存储的“下一个方块”区读取
     int canRnd[21] = {0}, canRndCnt = -1;
-    nowFalling.point[0] = 0;
+    nowFalling.point[0] = appearAt; //在指定位置放下
     for (int i = 0; i <= 20; i++) {
         nowFalling.point[1] = i;
         if (checkBlock(nowFalling)) canRnd[++canRndCnt] = i; //枚举所有情况并得到可行域数组
@@ -317,6 +317,17 @@ bool appearBlock() {
 }
 
 /**
+ * 更新每行有效格的信息
+ */
+void updateValidBlocks() {
+    for(int i=0;i<N;i++) {
+        validLine[i].count = 0;
+        memset(validLine[i].validOnes, 0, sizeof validLine[i].validOnes);
+        for (int j = 0; j < N; j++) if (currentMap[i][j].state) validLine[i].validOnes[validLine[i].count++] = j;
+    }
+}
+
+/**
  * 检查是否可以消行；
  * 消行后统计分数；
  * 统计所有有效方块位置，防止后续惩罚清格子清了个寂寞
@@ -324,10 +335,8 @@ bool appearBlock() {
 void judgeLines() {
     int startLine = 0, nowRemoved = 0; //startLine用于小优化一下消行后需要更新的范围
     int comboScore[4] = {1, 2, 4, 8}; //combo对应的分数倍乘(>=4combo对应8)
-    for (int i = 0; i < N; i++) { //枚举统计每行的有效方块个数
-        validLine[i].count = 0;
-        memset(validLine[i].validOnes, 0, sizeof validLine[i].validOnes);
-        for (int j = 0; j < N; j++) if (currentMap[i][j].state) validLine[i].validOnes[validLine[i].count++] = j;
+    updateValidBlocks(); //枚举统计每行的有效方块个数
+    for (int i = 0; i < N; i++) {
         if (validLine[i].count == 0) startLine++; //该行没方块，缩小更新范围
         else if (validLine[i].count == N) { //该行满行，消除下移
             for (int w = 0; w < N; w++) {
@@ -371,6 +380,7 @@ void judgeLines() {
             endGame(false);
         }
         if(mirrorEnabled) mirrorTotally(); //消行成功就转回来
+        appearAt = 0; //恢复下落初始位置
     }
 }
 

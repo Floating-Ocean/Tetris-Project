@@ -42,6 +42,7 @@ extern Timer timer;
 extern int nextBlock, nextRotate, savedBlock, savedRotate;
 extern int score, darkLevel, trialMove, removedLines;
 extern int challengeModeFault;
+extern int appearAt;
 extern double speedMultiply;
 extern bool enablePreview, hidePreviewTemporarily, challengeModeEnabled, beyondEnabled, challengeComplete;
 extern bool forceEndGame, mirrorEnabled;
@@ -90,6 +91,8 @@ extern void extractNextBlock();
 
 extern bool appearBlock();
 
+extern void updateValidBlocks();
+
 extern void judgeLines();
 
 extern void showSavedBlock();
@@ -97,7 +100,11 @@ extern void showSavedBlock();
 extern void saveBlock();
 
 //惩罚 game.Punishment.c
-extern void minusScore();
+extern bool shuffleBlocks();
+
+extern void sinkElevation();
+
+extern void minusScore(int n);
 
 extern void insertBarrier();
 

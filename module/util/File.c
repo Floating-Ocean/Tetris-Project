@@ -18,6 +18,9 @@
 
 //1.11改用Windows API，存入%localappdata%/Floating Ocean/Tetris/内
 
+/**
+ * 检查存储文件夹的父文件夹是否存在，不存在则创建
+ */
 void checkMainFolder() {
     char dirName[100];
     sprintf(dirName, "%s\\Floating Ocean", getenv("localappdata"));

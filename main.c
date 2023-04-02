@@ -17,8 +17,8 @@
 #include "collect/Collection.h"
 
 //-----版本控制-----
-const char *versionName = "2.3.0";
-const char *versionNameFull = "2.3.0.230102";
+const char *versionName = "2.4.0";
+const char *versionNameFull = "2.4.0.230402";
 
 //-----常量区-----
 const int DIRECTION_LEFT = -1, DIRECTION_RIGHT = 1, DIRECTION_DOWN = 0;
@@ -33,6 +33,7 @@ Timer timer;
 int nextBlock, nextRotate, savedBlock, savedRotate;
 int score = 0, darkLevel = 0, trialMove = 0, removedLines = 0;
 int challengeModeFault = 0;
+int appearAt = 0;
 double speedMultiply = 1.0;
 bool enablePreview = false, hidePreviewTemporarily = false, challengeModeEnabled = false, beyondEnabled = false, challengeComplete = false;
 bool forceEndGame = false, mirrorEnabled = false;
@@ -61,13 +62,14 @@ bool checkEnvironment(int argumentCount) {
     SetConsoleOutputCP(65001);
     if (argumentCount != 2 || strcmp(inputArgument[1], "/openConhost") != 0) {
         if (argumentCount == 2) {
-            if (importCustomTheme(inputArgument[1])) printf("\n\n\n  主题导入成功，可在下次打开游戏时切换.");
+            if (importCustomTheme(inputArgument[1])) //检测到拖入文件，设置主题
+                printf("\n\n\n  主题导入成功，可在下次打开游戏时切换.");
             system("pause > nul");
             return false;
         }
         system("title Tetris Loader");
         printf("\n  Please Wait . . .");
-        if (!checkFont()) {
+        if (!checkFont()) { //检查字体依赖
             system("cls");
             printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
             system("pause > nul");

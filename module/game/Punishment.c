@@ -17,11 +17,69 @@
 #include "../../collect/Collection.h"
 
 /**
- * 减分，范围为1-128
+ * 随机打乱降落方块底部开始到底的所有行方块
  */
-void minusScore() {
+bool shuffleBlocks() {
     hidePreview(true);
-    int minus = randBetween(1, 128);
+    int start = nowFalling.point[0] + 4;
+    if (start >= N) return false;
+    bool valid = false;
+    for (int i = start; i < N; i++) {
+        if (validLine[i].count > 0) valid = true;
+    }
+    if(!valid) return false;
+    showRandomActionHint("Blocks shuffled!");
+    for (int i = start; i < N; i++) {
+        if (validLine[i].count == 0) continue;
+        for (int p = 0; p < N; p++) { //打乱
+            int ind = randBetween(0, N - 1);
+            Point cur = currentMap[i][p];
+            currentMap[i][p] = currentMap[i][ind];
+            currentMap[i][ind] = cur;
+        }
+        for (int p = 0; p < N; p++) { //做动画
+            if(p % 4 == 0) Sleep(1);
+            if (mirrorEnabled)
+                AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - i, currentMap[i][p].color);
+            else AwaitSettingTextInPosition(26 + 2 * p, 3 + i, currentMap[i][p].color);
+            printf(currentMap[i][p].state ? "■" : "  ");
+        }
+    }
+    updateValidBlocks();
+    recoverDarkenLevel(true); //恢复Darken值
+    showRandomActionHint("");
+    hidePreview(false);
+    return true;
+}
+
+/**
+ * 随机将之后出现的方块的起始位置下移x格
+ */
+void sinkElevation() {
+    hidePreview(true);
+    int mx = 0;
+    for (int i = 0; i < N; i++) {
+        if (validLine[i].count != 0) break;
+        mx = i;
+    }
+    int minus = randBetween(0, mx);
+    minus = max(1, minus); //保证至少向下移一层（不能移也不代表寄了
+    char notice[78];
+    sprintf(notice, "Elevation sunk %d blocks!", minus);
+    showRandomActionHint(notice);
+    appearAt = minus;
+    recoverDarkenLevel(true); //恢复Darken值
+    showRandomActionHint("");
+    hidePreview(false);
+}
+
+/**
+ * 减分，范围为1-n
+ * @param n 最大值
+ */
+void minusScore(int n) {
+    hidePreview(true);
+    int minus = randBetween(1, n);
     char notice[78];
     sprintf(notice, "Score Lost: %d...  What a Pity!", minus);
     showRandomActionHint(notice);
@@ -42,8 +100,9 @@ void insertBarrier() {
     hidePreview(true);
     showRandomActionHint("Barrier Inserted!");
     bool straight = nowFalling.point[1] < N / 2 - 4 || nowFalling.point[1] > N / 2;
-    int insertLeft = straight ? N / 2 - 1 : nowFalling.point[1] - 1, insertRight = straight ? N / 2 : nowFalling.point[1] + 4;
-    for(int i=1;i < N - 1;i++) {
+    int insertLeft = straight ? N / 2 - 1 : nowFalling.point[1] - 1, insertRight = straight ? N / 2 :
+                                                                                   nowFalling.point[1] + 4;
+    for (int i = 1; i < N - 1; i++) {
         bool insert = currentMap[i + 1][insertLeft].state == 0 && currentMap[i + 1][insertRight].state == 0;
         if (insert) {
             Sleep(10);
@@ -75,10 +134,10 @@ void mirrorPartially() {
             currentMap[i][j] = currentMap[i][N - j - 1];
             currentMap[i][N - j - 1] = tmp;
             AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
-            if(animate) Sleep(10);
+            if (animate) Sleep(10);
             printf(currentMap[i][j].state ? "■" : "  ");
             AwaitSettingTextInPosition(26 + 2 * (N - j - 1), 3 + i, currentMap[i][j].color);
-            if(animate) Sleep(10);
+            if (animate) Sleep(10);
             printf(currentMap[i][N - j - 1].state ? "■" : "  ");
         }
     }
@@ -101,7 +160,7 @@ void mirrorTotally() {
             AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
             printf("  ");
         }
-        if(cnt > 0) Sleep(10);
+        if (cnt > 0) Sleep(10);
     }
     mirrorEnabled = !mirrorEnabled;
     for (int i = 0; i < N; i++) {
@@ -112,7 +171,7 @@ void mirrorTotally() {
             else AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
             printf(currentMap[i][j].state ? "■" : "  ");
         }
-        if(cnt > 0) Sleep(10);
+        if (cnt > 0) Sleep(10);
     }
     showBlock(nowFalling.rotate);
     if (mirrorEnabled) recoverDarkenLevel(true); //恢复Darken值
@@ -142,7 +201,6 @@ bool eraseBlockRandomly() {
         }
         currentLine--;
     }
-    recoverDarkenLevel(true); //恢复Darken值
     for (int i = 0; i <= min(randBetween(3 * 3, 9 * 9), 6 + score / 3); i++) { //修复刷分数的bug
         if (cnt == 0) {
             showRandomActionHint("");
@@ -160,6 +218,8 @@ bool eraseBlockRandomly() {
         else MoveCursor(26 + 2 * delX, 3 + delY);
         printf("  ");
     }
+    updateValidBlocks(); //更新有效方格
+    recoverDarkenLevel(true); //恢复Darken值
     showRandomActionHint("");
     hidePreview(false);
     return cnt != 0;
@@ -172,17 +232,14 @@ bool eraseBlockRandomly() {
 bool exchangeRowRandomly() {
     hidePreview(true);
     int valid[N], cnt = 0;
-    for (int j = nowFalling.point[0] + 4; j < N; j++) if (validLine[j].count > 0) valid[cnt++] = j; //从正在下落的方块的绝对底部到第N行找
+    for (int j = nowFalling.point[0] + 4; j < N; j++)
+        if (validLine[j].count > 0) valid[cnt++] = j; //从正在下落的方块的绝对底部到第N行找
     if (cnt > 1) {
         showRandomActionHint("Line Blocks Exchanged!");
         int exchangeA = randBetween(0, cnt - 1), exchangeB = randBetween(0, cnt - 2);
         if (exchangeB >= exchangeA) exchangeB++; //防止A和B自交(?
         exchangeA = valid[exchangeA];
         exchangeB = valid[exchangeB];
-        ValidLine tmpValid = validLine[exchangeA];
-        validLine[exchangeA] = validLine[exchangeB];
-        validLine[exchangeB] = tmpValid;
-        recoverDarkenLevel(true); //恢复Darken值
         for (int p = 0; p < N; p++) {
             Point tmpPoint = currentMap[exchangeA][p];
             currentMap[exchangeA][p] = currentMap[exchangeB][p];
@@ -191,14 +248,18 @@ bool exchangeRowRandomly() {
                 currentMap[exchangeA][p].color == currentMap[exchangeB][p].color)
                 continue; //如果一模一样就没必要动画了
             Sleep(1);
-            if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeA, currentMap[exchangeA][p].color);
+            if (mirrorEnabled)
+                AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeA, currentMap[exchangeA][p].color);
             else AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeA, currentMap[exchangeA][p].color);
             printf(currentMap[exchangeA][p].state ? "■" : "  ");
             Sleep(1);
-            if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeB, currentMap[exchangeB][p].color);
+            if (mirrorEnabled)
+                AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeB, currentMap[exchangeB][p].color);
             else AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeB, currentMap[exchangeB][p].color);
             printf(currentMap[exchangeB][p].state ? "■" : "  ");
         }
+        updateValidBlocks(); //更新有效方格
+        recoverDarkenLevel(true); //恢复Darken值
         showRandomActionHint("");
         hidePreview(false);
         return true;
@@ -214,7 +275,6 @@ void changeSpeedRandomly() {
     hidePreview(true);
     bool down = randBetween(0, 9) < 5;
     showRandomActionHint(down ? "Speed Down!" : "Speed Up!");
-    recoverDarkenLevel(true); //恢复Darken值
     if (beyondEnabled)
         speedMultiply = down ? (double) randBetween(1041, 1388) / 1000
                              : (double) randBetween(156, 400) / 1000; //0.72~0.96, 2.50~6.40倍速，精度0.01
@@ -223,6 +283,7 @@ void changeSpeedRandomly() {
                              : (double) randBetween(250, 500) / 1000; //0.64~0.80, 2.00~4.00倍速，精度0.01
     if (enablePreview) refreshPreview();
     speedMultiplyEnabledTime = GetTickCount();
+    recoverDarkenLevel(true); //恢复Darken值
     showRandomActionHint("");
     hidePreview(false);
 }
@@ -306,14 +367,21 @@ void checkDarkenLevel(bool *ended) {
             if (currentGameMode.mode == MODE_IN.mode) {
                 bool toErase = false;
                 int type = randBetween(0, 10000);
-                if (type <= 2800 && exchangeRowRandomly()); //nothing
-                else if(type <= 3600 && !mirrorEnabled) mirrorTotally();
-                else if(type <= 4400) mirrorPartially();
-                else if(type <= 5200) insertBarrier();
-                else if(type <= 5300) minusScore();
-                else if (type <= 7600 || score >= 1000) changeSpeedRandomly();  //防止刷分！！！！！
+                if (type <= 2500 && exchangeRowRandomly()); //nothing
+                else if (type <= 3400 && !mirrorEnabled) mirrorTotally();
+                else if (type <= 4300) mirrorPartially();
+                else if (type <= 5200) insertBarrier();
+                else if (type <= 5300) minusScore(128);
+                else if (type <= 5500 && shuffleBlocks());
+                else if (type <= 5750) sinkElevation();
+                else if (type <= 7750 || score >= 1000) changeSpeedRandomly();  //防止刷分！！！！！
                 else toErase = true;
-                if(!toErase) return;
+                if (!toErase) return;
+            }else if(currentGameMode.mode == MODE_HD.mode){
+                if(randBetween(0, 10000) > 9600) {
+                    minusScore(12);
+                    return;
+                }
             }
             if (!eraseBlockRandomly()) {
                 score += beyondEnabled ? 25 : 100; //能消完也是个神仙了

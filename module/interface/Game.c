@@ -74,20 +74,20 @@ void endGame(bool force) {
  * 初始化并输出Greetings到对应ui区
  */
 void showGreetings() {
-    char *greet1[40] = {"我就知道,", "这里啊,", "消行消行~", "哎哎哎， ", "总会有种", "长按上键", "万物，尘埃.",
+    char *greet1[42] = {"我就知道,", "这里啊,", "消行消行~", "哎哎哎， ", "总会有种", "长按上键", "万物，尘埃.",
                         "EZ难度呢,", "HD难度啊,", "IN难度呀,", "翻 (低头)", "有没有可能", "有没有可能", "哎呀我丢",
                         "你干嘛~", "两只老虎", "这里是", "5YW9LStfLg==", "Challenge", "↑↑↓↓", "新的事物，",
                         "超越一切，", "你说这C语言", "哼 哼 哼", "你是一个一个", "存点吧孩子", "这里是，",
                         "Challenge~", "挑战未知，", "哪里更新游戏", "游戏这玩意儿", "你...搁这儿", "俄罗斯方块",
-                        "金克拉！", "Coming", "江源速报：", "Hello, ", "TETRIS!!!", "这不是很简单", "大家好我是"};
-    char *greet2[40] = {"你会看这里.", "什么都没有!", "GKD! 好兄弟.", "要寄了！！", "被坑的感觉.", "长条变风车.",
+                        "金克拉！", "Coming", "江源速报：", "Hello, ", "TETRIS!!!", "这不是很简单", "大家好我是", "这是什么", "大家好我是"};
+    char *greet2[42] = {"你会看这里.", "什么都没有!", "GKD! 好兄弟.", "要寄了！！", "被坑的感觉.", "长条变风车.",
                         "尘埃落定吗?", "它不叫摁着.", "它不叫高清.", "它不叫里面.", "给你看啥呢?", "这是一句话.",
                         "你在看这里.", "咋还有空格.", "嘿嘿嘿呦", "爱跳舞~", "Greetings!", ".+-..---.-__",
                         "Type it.", "←←→→", "在未知处...", "创死凡人！", "咋这么难搞", "啊啊啊啊啊", "俄罗斯方块啊",
                         "不存白不存", "这里是那里", "25 Kill！", "方可超越未知", "GitHub？", "一瞬间就崩力",
                         "叠罗汉呢??", "旋转四分钟~", "我要金克拉!", "soooooon!", "啥也没报。", "2022 + 1 !", "!!!2IЯT∃T",
-                        "手忙脚乱.jpg", "米浴说的道理"};
-    int index = randBetween(0, 39);
+                        "手忙脚乱.jpg", "米浴说的道理", "看一下", "TetrisGPT"};
+    int index = randBetween(0, 41);
     SetTextInPosition(greet1[index], 8, 20, COLOR_MAIN_TEXT);
     SetTextInPosition(greet2[index], 8, 22, COLOR_MAIN_TEXT);
     SetTextInPosition("From Ocean", 8, 25, COLOR_SUB_TEXT);
@@ -105,7 +105,7 @@ void startGame() {
             challengeModeEnabled ? "Challenge Mode" : "");
     refreshTitleState(_curTitle);
     srand(time(NULL)); //初始化随机数种子
-    darkLevel = trialMove = removedLines = challengeModeFault = 0;
+    appearAt = darkLevel = trialMove = removedLines = challengeModeFault = 0;
     savedBlock = savedRotate = -1;
     speedMultiply = 1.0;
     initializeMap();

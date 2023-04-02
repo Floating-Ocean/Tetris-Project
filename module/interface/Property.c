@@ -90,8 +90,8 @@ bool showSelectView() {
     PlaceWindowCentral();
     refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
     SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
-    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除8个有效行内的几个格子."};
-    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除16个有消行内的多个格子."};
+    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
+    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
     char *in[2] = {"I   Insane Mode", challengeModeEnabled ? "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."
                                                            : "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏无法暂停."};
     printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
@@ -117,7 +117,9 @@ bool showSelectView() {
                     }
                 } else currentBeyondInputIndex = -1;
                 //做一个方向键循环选择
-                if (input == 72 || input == 75) { //key up & left.
+                if(!selected && (input == 72 || input == 75 || input == 80 || input == 77)){
+                    input = 101; //没有选中按方向键选中第一难度
+                }else if (input == 72 || input == 75) { //key up & left.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 105;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 101;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 104;
@@ -208,8 +210,8 @@ bool showBeyondSelectView() {
     PlaceWindowCentral();
     refreshTitleState("Inner Mode Choosing    Challenge Mode");
     SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
-    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除最后三行内的几个格子."};
-    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将随机删除最后十行内的多个格子."};
+    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
+    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
     char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."};
     char *byd[2] = {"B   Beyond Mode", "    在Insane Mode的基础上，消行后进度条只恢复较少的值."};
     printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
@@ -227,7 +229,9 @@ bool showBeyondSelectView() {
             if (awaitDirectionInput) {
                 awaitDirectionInput = false;
                 //做一个方向键循环选择
-                if (input == 72 || input == 75) { //key up & left.
+                if(!selected && (input == 72 || input == 75 || input == 80 || input == 77)){
+                    input = 101; //没有选中按方向键选中第一难度
+                }else if (input == 72 || input == 75) { //key up & left.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 98;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 101;
                     else if (beyondEnabled) input = 105;
