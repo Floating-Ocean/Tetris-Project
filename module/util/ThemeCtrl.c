@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@
  * 导入自定义主题
  * @param file 文件路径
  */
-bool importCustomTheme(char *file) {
+bool importCustomTheme(const char *file) {
     //step1. 检查文件后缀
-    int startIndex;
+    int startIndex = 0;
     for (int i = 0; file[i] != '\0'; i++) if (file[i] == '\\') startIndex = i;
     for (int i = startIndex; file[i] != '\0'; i++) if (file[i] == '.') startIndex = i;
     if (strcmp(&file[startIndex + 1], "fotp") != 0) {
@@ -36,8 +36,9 @@ bool importCustomTheme(char *file) {
     GetPrivateProfileString("ThemeIntro", "Description", "No Description.", description, sizeof description, file);
     GetPrivateProfileString("ThemeIntro", "Publisher", "©? Nameless", publisher, sizeof publisher, file);
     //主题配置
-    char *tags[14] = {"BackgroundColor", "ForegroundStrongColor", "ForegroundModestColor",
-                      "ForegroundMildColor", "PassColor", "WarningColor", "FaultColor", "BlockColor_0", "BlockColor_1",
+    const char *tags[14] = {
+        "BackgroundColor", "ForegroundStrongColor", "ForegroundModestColor",
+        "ForegroundMildColor", "PassColor", "WarningColor", "FaultColor", "BlockColor_0", "BlockColor_1",
                       "BlockColor_2", "BlockColor_3", "BlockColor_4", "BlockColor_5", "BlockColor_6"};
     char fetched[14][12];
     for (int i = 0; i < 14; i++) {
@@ -51,10 +52,11 @@ bool importCustomTheme(char *file) {
            title, description, publisher);
     while (true) //等待按esc或继续
         if (kbhit()) {
-            int input = getch();
+            const int input = getch();
             if (input == 27) {
                 return false; //按esc返回开始页
-            } else break;
+            }
+            break;
         }
     insertDB("TetrisSetting", "ImportedTheme", true);
     for (int i = 0; i < 14; i++) WritePrivateProfileString("TetrisCustomTheme", tags[i], fetched[i], getFileName());

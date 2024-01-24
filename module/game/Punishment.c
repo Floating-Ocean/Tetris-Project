@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
  */
 bool shuffleBlocks() {
     hidePreview(true);
-    int start = nowFalling.point[0] + 4;
+    const int start = nowFalling.point[0] + 4;
     if (start >= N) return false;
     bool valid = false;
     for (int i = start; i < N; i++) {
@@ -32,8 +32,8 @@ bool shuffleBlocks() {
     for (int i = start; i < N; i++) {
         if (validLine[i].count == 0) continue;
         for (int p = 0; p < N; p++) { //打乱
-            int ind = randBetween(0, N - 1);
-            Point cur = currentMap[i][p];
+            const int ind = randBetween(0, N - 1);
+            const Point cur = currentMap[i][p];
             currentMap[i][p] = currentMap[i][ind];
             currentMap[i][ind] = cur;
         }
@@ -77,9 +77,9 @@ void sinkElevation() {
  * 减分，范围为1-n
  * @param n 最大值
  */
-void minusScore(int n) {
+void minusScore(const int n) {
     hidePreview(true);
-    int minus = randBetween(1, n);
+    const int minus = randBetween(1, n);
     char notice[78];
     sprintf(notice, "Score Lost: %d...  What a Pity!", minus);
     showRandomActionHint(notice);
@@ -99,11 +99,11 @@ void minusScore(int n) {
 void insertBarrier() {
     hidePreview(true);
     showRandomActionHint("Barrier Inserted!");
-    bool straight = nowFalling.point[1] < N / 2 - 4 || nowFalling.point[1] > N / 2;
-    int insertLeft = straight ? N / 2 - 1 : nowFalling.point[1] - 1, insertRight = straight ? N / 2 :
+    const bool straight = nowFalling.point[1] < N / 2 - 4 || nowFalling.point[1] > N / 2;
+    const int insertLeft = straight ? N / 2 - 1 : nowFalling.point[1] - 1, insertRight = straight ? N / 2 :
                                                                                    nowFalling.point[1] + 4;
     for (int i = 1; i < N - 1; i++) {
-        bool insert = currentMap[i + 1][insertLeft].state == 0 && currentMap[i + 1][insertRight].state == 0;
+        const bool insert = currentMap[i + 1][insertLeft].state == 0 && currentMap[i + 1][insertRight].state == 0;
         if (insert) {
             Sleep(10);
             currentMap[i][insertLeft].state = 1;
@@ -129,14 +129,12 @@ void mirrorPartially() {
     showRandomActionHint("Partially Mirrored!");
     for (int i = nowFalling.point[0] + 4; i < N; i++) {
         for (int j = 0; j < N / 2; j++) {
-            bool animate = (currentMap[i][j].state + currentMap[i][N - j - 1].state) > 0;
-            Point tmp = currentMap[i][j];
-            currentMap[i][j] = currentMap[i][N - j - 1];
-            currentMap[i][N - j - 1] = tmp;
+            const bool animate = currentMap[i][j].state + currentMap[i][N - j - 1].state > 0;
+            swap(&currentMap[i][j], &currentMap[i][N - j - 1], sizeof(Point));
             AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
             if (animate) Sleep(10);
             printf(currentMap[i][j].state ? "■" : "  ");
-            AwaitSettingTextInPosition(26 + 2 * (N - j - 1), 3 + i, currentMap[i][j].color);
+            AwaitSettingTextInPosition(26 + 2 * (N - j - 1), 3 + i, currentMap[i][N - j - 1].color);
             if (animate) Sleep(10);
             printf(currentMap[i][N - j - 1].state ? "■" : "  ");
         }
@@ -207,7 +205,7 @@ bool eraseBlockRandomly() {
             hidePreview(false);
             return false; //给消没了
         }
-        int randomIndex = randBetween(0, cnt - 1),
+        const int randomIndex = randBetween(0, cnt - 1),
                 *randomDelete = valid[randomIndex], delY = randomDelete[0], delX = randomDelete[1]; //抽一个幸运方块将其干没
         valid[randomIndex][0] = valid[cnt - 1][0];
         valid[randomIndex][1] = valid[cnt - 1][1];
@@ -241,9 +239,7 @@ bool exchangeRowRandomly() {
         exchangeA = valid[exchangeA];
         exchangeB = valid[exchangeB];
         for (int p = 0; p < N; p++) {
-            Point tmpPoint = currentMap[exchangeA][p];
-            currentMap[exchangeA][p] = currentMap[exchangeB][p];
-            currentMap[exchangeB][p] = tmpPoint;
+            swap(&currentMap[exchangeA][p], &currentMap[exchangeB][p], sizeof(Point));
             if (currentMap[exchangeA][p].state == currentMap[exchangeB][p].state &&
                 currentMap[exchangeA][p].color == currentMap[exchangeB][p].color)
                 continue; //如果一模一样就没必要动画了
@@ -273,7 +269,7 @@ bool exchangeRowRandomly() {
  */
 void changeSpeedRandomly() {
     hidePreview(true);
-    bool down = randBetween(0, 9) < 5;
+    const bool down = randBetween(0, 9) < 5;
     showRandomActionHint(down ? "Speed Down!" : "Speed Up!");
     if (beyondEnabled)
         speedMultiply = down ? (double) randBetween(1041, 1388) / 1000
@@ -294,7 +290,7 @@ void changeSpeedRandomly() {
  * @param up up
  * @param color 方格颜色
  */
-void animateDarkenCover(int down, int up, int color) {
+void animateDarkenCover(const int down, const int up, const int color) {
     for (int i = down; i >= up; i--) {
         Sleep(2); //微小延时来实现类似于动画的效果
         AwaitSettingTextInPosition(24, 2 + i, color);
@@ -309,7 +305,7 @@ void animateDarkenCover(int down, int up, int color) {
  * @param level 起始Darken值 (level -> 0)
  * @param color 补上的方格颜色
  */
-void animateDarkenRecover(int level, int color) {
+void animateDarkenRecover(const int level, const int color) {
     animateDarkenCover(level, beyondEnabled ? min(24, max(1, (level - max(-5, 9 - score / 12)))) : 1, color);
 }
 
@@ -317,7 +313,7 @@ void animateDarkenRecover(int level, int color) {
  * 恢复Darken值
  * @param fail 成功消行: true, 超时: false
  */
-void recoverDarkenLevel(bool fail) {
+void recoverDarkenLevel(const bool fail) {
     animateDarkenRecover(darkLevel, fail ? COLOR_FAULT : COLOR_PASS); //状态颜色提示
     animateDarkenRecover(darkLevel, COLOR_MAIN_TEXT); //恢复到初始颜色
     darkLevel = (beyondEnabled ? max(1, (darkLevel - max(-5, 9 - score / 12))) : 1) - 1;
@@ -338,7 +334,7 @@ void downDrawDarkenLevel() {
  * 显示随机惩罚类型，方便玩家识别
  * @param action 类型文本
  */
-void showRandomActionHint(char *action) {
+void showRandomActionHint(const char *action) {
     AwaitSettingTextInPosition(4, 1, COLOR_MAIN_TEXT);
     printf("%-24s", action);
 }
@@ -346,9 +342,10 @@ void showRandomActionHint(char *action) {
 
 /**
  * 检查是否需要扣除Darken值
+ * @param ended 是否出现挑战结束
  */
 void checkDarkenLevel(bool *ended) {
-    double increase[3] = {0.16, 0.32, 0.64};
+    constexpr double increase[3] = {0.16, 0.32, 0.64};
     if (trialMove == max(2, (int) (18 - (double) score / (100 * increase[currentGameMode.mode])))) { //达到阈值
         trialMove = 0;
         darkLevel++;
@@ -358,7 +355,7 @@ void checkDarkenLevel(bool *ended) {
                 challengeModeFault++;
                 if (challengeModeFault >= 3) { //挑战失败
                     forceEndGame = true;
-                    *ended = true;
+                    *ended = true; //传递 挑战失败 消息给主线程
                     endGame(false);
                     return;
                 }
@@ -366,13 +363,13 @@ void checkDarkenLevel(bool *ended) {
             speedMultiply = 1.0; //复位速度
             if (currentGameMode.mode == MODE_IN.mode) {
                 bool toErase = false;
-                int type = randBetween(0, 10000);
-                if (type <= 2500 && exchangeRowRandomly()); //nothing
+                const int type = randBetween(0, 10000);
+                if (type <= 2500 && exchangeRowRandomly()) {} //nothing
                 else if (type <= 3400 && !mirrorEnabled) mirrorTotally();
                 else if (type <= 4300) mirrorPartially();
                 else if (type <= 5200) insertBarrier();
                 else if (type <= 5300) minusScore(128);
-                else if (type <= 5500 && shuffleBlocks());
+                else if (type <= 5500 && shuffleBlocks()) {}
                 else if (type <= 5750) sinkElevation();
                 else if (type <= 7750 || score >= 1000) changeSpeedRandomly();  //防止刷分！！！！！
                 else toErase = true;

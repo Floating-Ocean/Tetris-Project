@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ void *timeThread(void *args) {
         timer.previousTimeMills = GetTickCount();
         timer.currentTimeMills = timer.previousTimeMills;
     } else { //处理上一次剩下的时间
-        DWORD delta = timer.currentTimeMills - timer.previousTimeMills;
+        const DWORD delta = timer.currentTimeMills - timer.previousTimeMills;
         timer.currentTimeMills = GetTickCount();
         timer.previousTimeMills = timer.currentTimeMills - delta;
     }
@@ -39,12 +39,11 @@ void *timeThread(void *args) {
         if (timer.currentTimeMills - timer.previousTimeMills >= currentGameMode.speed * speedMultiply) {
             pthread_exit("true"); //无键盘事件，可以下落
             break;
-        } else {
-            timer.currentTimeMills = GetTickCount();
-            if (whenBreakTimer()) {
-                pthread_exit("false"); //有键盘事件，打断
-                break;
-            }
+        }
+        timer.currentTimeMills = GetTickCount();
+        if (whenBreakTimer()) {
+            pthread_exit("false"); //有键盘事件，打断
+            break;
         }
     }
 }

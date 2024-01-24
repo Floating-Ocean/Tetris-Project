@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef TETRIS_COLLECTION_H
+#define TETRIS_COLLECTION_H
+
+#endif //TETRIS_COLLECTION_H
 
 #include "Structs.h"
 #include "Colors.h"
-
-#ifndef TETRIS_METHODS_H
-#define TETRIS_METHODS_H
-
-#endif //TETRIS_METHODS_H
 
 //Game.c 变量
 extern GameMode MODE_EZ, MODE_HD, MODE_IN;
@@ -128,7 +127,7 @@ extern void recoverDarkenLevel(bool fail);
 
 extern void downDrawDarkenLevel();
 
-extern void showRandomActionHint(char *action);
+extern void showRandomActionHint(const char *action);
 
 //分数 game/Score.c
 extern void printScore(int showScore);
@@ -142,7 +141,7 @@ extern void MoveCursor(int x, int y);
 
 extern void AwaitSettingTextInPosition(int x, int y, int color);
 
-extern void SetTextInPosition(char *text, int x, int y, int color);
+extern void SetTextInPosition(const char *text, int x, int y, int color);
 
 extern bool initializeFont();
 
@@ -152,7 +151,7 @@ extern void DisableFeatures();
 
 extern void PlaceWindowCentral();
 
-extern void refreshTitleState(char *state);
+extern void refreshTitleState(const char *state);
 
 extern bool initializeConsole();
 
@@ -161,9 +160,9 @@ extern void checkFolder();
 
 extern const char *getFileName();
 
-extern int queryDB(char *container, char *key);
+extern int queryDB(const char *container, const char *key);
 
-extern void insertDB(char *container, char *key, int data);
+extern void insertDB(const char *container, const char *key, int data);
 
 //游戏 interface/Game.c
 extern void endGame(bool force);
@@ -173,9 +172,9 @@ extern void showGreetings();
 extern void startGame();
 
 //属性 interface/Property.c
-extern void printOne(int index, int textColor, int borderColor, char **text);
+extern void printOne(int index, int textColor, int borderColor, const char **text);
 
-extern void showCurrentMode(char **text, GameMode mode, int color);
+extern void showCurrentMode(const char **text, GameMode mode, int color);
 
 extern void recoverTitle();
 
@@ -192,6 +191,8 @@ extern void refreshPreview();
 extern void hidePreview(bool hide);
 
 //基本函数 util/StdMethod.c
+extern void swap(void *a, void *b, const size_t typeSize);
+
 extern int randBetween(int x, int y);
 
 extern void shuffleIntArray(int *array, int n);
@@ -200,7 +201,7 @@ extern void getCurrentGreeting(char *greet);
 
 extern int hexToDec(char hex);
 
-extern COLORREF hexToRGB(char *hex);
+extern COLORREF hexToRGB(const char *hex);
 
 //计时器 util/Timer.c
 extern void *timeThread(void *args);
@@ -211,4 +212,4 @@ extern bool whenBreakTimer(); //abstract -> Game.c
 extern bool checkFont();
 
 //主题控制 utilThemeCtrl.c
-extern bool importCustomTheme(char *file);
+extern bool importCustomTheme(const char *file);

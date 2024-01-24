@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@
 void checkMainFolder() {
     char dirName[100];
     sprintf(dirName, "%s\\Floating Ocean", getenv("localappdata"));
-    DWORD fileAttribute = GetFileAttributesA(dirName);
+    const DWORD fileAttribute = GetFileAttributesA(dirName);
     if (fileAttribute == INVALID_FILE_ATTRIBUTES || !(fileAttribute & FILE_ATTRIBUTE_DIRECTORY))
-        CreateDirectory((PCSTR) dirName, NULL);
+        CreateDirectory(dirName, NULL);
 }
 
 /**
@@ -36,9 +36,9 @@ void checkFolder() {
     checkMainFolder();
     char dirName[100];
     sprintf(dirName, "%s\\Floating Ocean\\Tetris", getenv("localappdata"));
-    DWORD fileAttribute = GetFileAttributesA(dirName);
+    const DWORD fileAttribute = GetFileAttributesA(dirName);
     if (fileAttribute == INVALID_FILE_ATTRIBUTES || !(fileAttribute & FILE_ATTRIBUTE_DIRECTORY))
-        CreateDirectory((PCSTR) dirName, NULL);
+        CreateDirectory(dirName, NULL);
 }
 
 /**
@@ -57,7 +57,7 @@ const char *getFileName() {
  * @param key key=
  * @return 数据
  */
-int queryDB(char *container, char *key) {
+int queryDB(const char *container, const char *key) {
     checkFolder();
     return GetPrivateProfileInt(container, key, 0, getFileName());
 }
@@ -68,7 +68,7 @@ int queryDB(char *container, char *key) {
  * @param key key=
  * @param data 内容
  */
-void insertDB(char *container, char *key, int data) {
+void insertDB(const char *container, const char *key, const int data) {
     checkFolder();
     char toSave[64];
     sprintf(toSave, "%d", data);

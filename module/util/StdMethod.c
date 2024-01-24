@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 #include "../../collect/Collection.h"
 
+
 /**
- * 在指定范围生成随机数
- * @param x 左区间
- * @param y 右区间
- * @return 随机数
+ * C语言的 "泛型" 交换函数
+ * @param a A
+ * @param b B
+ * @param typeSize 类型的大小 sizeof
  */
-int randBetween(int x, int y) {
-    return rand() % (y - x + 1) + x;
+void swap(void *a, void *b, const size_t typeSize) {
+    char *tmp = malloc(typeSize);
+    memcpy(tmp, a, typeSize);
+    memcpy(a, b, typeSize);
+    memcpy(b, tmp, typeSize);
 }
 
 /**
@@ -31,9 +35,9 @@ int randBetween(int x, int y) {
  * @param array int数组
  * @param n 数组大小
  */
-void shuffleIntArray(int *array, int n) {
+void shuffleIntArray(int *array, const int n) {
     for (int i = 0; i < n; i++) {
-        int ind = randBetween(0, n - 1), cur = array[i];
+        const int ind = randBetween(0, n - 1), cur = array[i];
         array[i] = array[ind];
         array[ind] = cur;
     }
@@ -44,21 +48,23 @@ void shuffleIntArray(int *array, int n) {
  * @param greet 存储问候语的地址
  */
 void getCurrentGreeting(char *greet) {
-    char *greets[5][4] = {
-            "早上好呀", "Hey, 早上好", "呼呼~ 早上了呢", "又是新的一天呢",
-            "中午好", "午安", "12点了", "吃了没",
-            "下午哩", "下午好呐", "又到下午力", "下午好哇",
-            "晚上好呀", "又到晚上咯", "又在晚上看到你力", "一天过得好快鸭",
-            "不早了", "早点睡呀", "呼呼~好困呐", "晚安捏"};
+    const char *greets[5][5] = {
+        "早上好呀", "Hey, 早上好", "呼呼~ 早上了呢", "又是新的一天呢", "早安",
+        "中午好", "午安", "12点了", "吃了没", "午安",
+        "下午哩", "下午好呐", "又到下午力", "下午好哇", "午安",
+        "晚上好呀", "又到晚上咯", "又在晚上看到你力", "一天过得好快鸭", "晚安",
+        "不早了", "早点睡呀", "呼呼~好困呐", "晚安捏", "晚安"
+    };
     SYSTEMTIME systemTime;
     GetLocalTime(&systemTime);
-    int hour = systemTime.wHour, index = 4;
+    const int hour = systemTime.wHour;
+    int index = 4;
     if (hour >= 6 && hour <= 11) index = 0;
     else if (hour == 12) index = 1;
     else if (hour >= 13 && hour <= 16) index = 2;
     else if (hour >= 17 && hour <= 23) index = 3;
     srand(time(NULL)); //初始化随机数种子
-    strcpy(greet, greets[index][randBetween(0, 3)]);
+    strcpy(greet, greets[index][randBetween(0, 4)]);
 }
 
 /**
@@ -66,8 +72,12 @@ void getCurrentGreeting(char *greet) {
  * @param hex
  * @return
  */
-int hexToDec(char hex) {
-    return (hex >= '0' && hex <= '9') ? hex - '0' : ((hex >= 'A' && hex <= 'Z') ? hex - 'A' + 10 : hex - 'a' + 10);
+int hexToDec(const char hex) {
+    return hex >= '0' && hex <= '9'
+               ? hex - '0'
+               : hex >= 'A' && hex <= 'Z'
+                     ? hex - 'A' + 10
+                     : hex - 'a' + 10;
 }
 
 /**
@@ -75,8 +85,8 @@ int hexToDec(char hex) {
  * @param hex 形如0xffffff和#ffffff的颜色
  * @return rgb色值
  */
-COLORREF hexToRGB(char *hex) {
-    int size = strlen(hex) == 7 ? 7 : 8; //支持0xffffff和#ffffff
+COLORREF hexToRGB(const char *hex) {
+    const int size = strlen(hex) == 7 ? 7 : 8; //支持0xffffff和#ffffff
     return RGB(hexToDec(hex[size - 6]) * 16 + hexToDec(hex[size - 5]),
                hexToDec(hex[size - 4]) * 16 + hexToDec(hex[size - 3]),
                hexToDec(hex[size - 2]) * 16 + hexToDec(hex[size - 1]));

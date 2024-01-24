@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 #include "../../collect/Collection.h"
 
 //三个难度
-GameMode MODE_EZ = {"EZ", 0x00, 500, 1},
+GameMode MODE_EZ = {"EZ", 0x00, 500000, 1},
         MODE_HD = {"HD", 0x01, 300, 2},
         MODE_IN = {"IN", 0x02, 200, 5};
 GameMode currentGameMode;
@@ -29,7 +29,7 @@ GameMode currentGameMode;
  * @param borderColor 更改边框颜色
  * @param text 显示内容
  */
-void printOne(int index, int textColor, int borderColor, char **text) {
+void printOne(const int index, const int textColor, const int borderColor, const char **text) {
     AwaitSettingTextInPosition(5, 5 + index * 8, borderColor);
     for (int i = 0; i < 36; i++) printf("■");
     for (int i = 0; i < 4; i++) {
@@ -48,12 +48,12 @@ void printOne(int index, int textColor, int borderColor, char **text) {
  * @param mode 游戏模式
  * @param color 更改颜色
  */
-void showCurrentMode(char **text, GameMode mode, int color) {
+void showCurrentMode(const char **text, const GameMode mode, const int color) {
     currentGameMode = mode;
     if (!beyondEnabled) printOne(mode.mode, color, color, text);
     AwaitSettingTextInPosition(5, 2, COLOR_MAIN_TEXT);
     printf("%s%s%s", "当前选中游戏模式：  ",
-           beyondEnabled ? "BYD" : (mode.mode == 0x00 ? "EZ" : mode.mode == 0x01 ? "HD" : "IN"),
+           beyondEnabled ? "BYD" : mode.mode == 0x00 ? "EZ" : mode.mode == 0x01 ? "HD" : "IN",
            " Mode   按空格键继续.");
 }
 
@@ -90,19 +90,23 @@ bool showSelectView() {
     PlaceWindowCentral();
     refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
     SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
-    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
-    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
-    char *in[2] = {"I   Insane Mode", challengeModeEnabled ? "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."
-                                                           : "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏无法暂停."};
+    const char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
+    const char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
+    const char *in[2] = {
+        "I   Insane Mode", challengeModeEnabled
+                               ? "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."
+                               : "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏无法暂停."
+    };
     printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
     printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
     printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
     bool selected = false, confirm = false;
-    int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13}, currentChallengeInputIndex = -1;
-    int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77,
-                         80, 80, 80, 80, 80, 80, 80, 80, 80, 80}, currentBeyondInputIndex = -1;
+    constexpr int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13};
+    constexpr int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80};
+    int currentChallengeInputIndex = -1, currentBeyondInputIndex = -1;
     bool awaitDirectionInput = false;
-    while (!confirm) { //未决定难度，等待输入
+    while (!confirm) {
+        //未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
             if (input == 224) {
@@ -117,13 +121,15 @@ bool showSelectView() {
                     }
                 } else currentBeyondInputIndex = -1;
                 //做一个方向键循环选择
-                if(!selected && (input == 72 || input == 75 || input == 80 || input == 77)){
+                if (!selected && (input == 72 || input == 75 || input == 80 || input == 77)) {
                     input = 101; //没有选中按方向键选中第一难度
-                }else if (input == 72 || input == 75) { //key up & left.
+                } else if (input == 72 || input == 75) {
+                    //key up & left.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 105;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 101;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 104;
-                } else if (input == 80 || input == 77) { //key down & right.
+                } else if (input == 80 || input == 77) {
+                    //key down & right.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 104;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 105;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 101;
@@ -133,7 +139,8 @@ bool showSelectView() {
                     showWelcomePage();
                     return false;
                 }
-                if (!challengeModeEnabled) { //读取输入challenge回车
+                if (!challengeModeEnabled) {
+                    //读取输入challenge回车
                     if (challengeInput[++currentChallengeInputIndex] == input ||
                         (currentChallengeInputIndex < 9 && challengeInput[currentChallengeInputIndex] - 32 == input)) {
                         if (currentChallengeInputIndex == 9) {
@@ -210,16 +217,17 @@ bool showBeyondSelectView() {
     PlaceWindowCentral();
     refreshTitleState("Inner Mode Choosing    Challenge Mode");
     SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
-    char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
-    char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
-    char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."};
-    char *byd[2] = {"B   Beyond Mode", "    在Insane Mode的基础上，消行后进度条只恢复较少的值."};
+    const char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
+    const char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
+    const char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."};
+    const char *byd[2] = {"B   Beyond Mode", "    在Insane Mode的基础上，消行后进度条只恢复较少的值."};
     printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
     printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
     printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
     printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
     bool selected = false, confirm = false, awaitDirectionInput = false;
-    while (!confirm) { //未决定难度，等待输入
+    while (!confirm) {
+        //未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
             if (input == 224) {
@@ -229,14 +237,16 @@ bool showBeyondSelectView() {
             if (awaitDirectionInput) {
                 awaitDirectionInput = false;
                 //做一个方向键循环选择
-                if(!selected && (input == 72 || input == 75 || input == 80 || input == 77)){
+                if (!selected && (input == 72 || input == 75 || input == 80 || input == 77)) {
                     input = 101; //没有选中按方向键选中第一难度
-                }else if (input == 72 || input == 75) { //key up & left.
+                } else if (input == 72 || input == 75) {
+                    //key up & left.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 98;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 101;
                     else if (beyondEnabled) input = 105;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 104;
-                } else if (input == 80 || input == 77) { //key down & right.
+                } else if (input == 80 || input == 77) {
+                    //key down & right.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 104;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 105;
                     else if (beyondEnabled) input = 101;
@@ -356,8 +366,9 @@ bool showBeyondSelectView() {
  * @return level
  */
 int calculateLevel() {
-    int root[3] = {1, 4, 7};
-    double increase[3] = {0.16, 0.32, 0.64}, e = 2.718281828459;
+    constexpr int root[3] = {1, 4, 7};
+    constexpr double increase[3] = {0.16, 0.32, 0.64};
+    constexpr double e = 2.718281828459;
     return root[currentGameMode.mode] + (int) floor(sqrt((double) score / (e * increase[currentGameMode.mode])));
 }
 
@@ -379,7 +390,7 @@ void refreshPreview() {
  * 是否隐藏Preview
  * @param hide 是否隐藏
  */
-void hidePreview(bool hide) {
+void hidePreview(const bool hide) {
     if (hide) {
         hidePreviewTemporarily = enablePreview;
         if (hidePreviewTemporarily) {

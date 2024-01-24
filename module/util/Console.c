@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
  * 隐藏光标 (需要移动光标填充信息)
  */
 void HideCursor() {
-    CONSOLE_CURSOR_INFO cursor_info = {1, 0};
+    const CONSOLE_CURSOR_INFO cursor_info = {1, 0};
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursor_info);
 }
 
@@ -29,8 +29,8 @@ void HideCursor() {
  * @param x x轴
  * @param y y轴
  */
-void MoveCursor(int x, int y) {
-    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+void MoveCursor(const int x, const int y) {
+    const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD pos;
     pos.X = (SHORT) x;
     pos.Y = (SHORT) y;
@@ -43,7 +43,7 @@ void MoveCursor(int x, int y) {
  * @param y y轴
  * @param color 颜色
  */
-void AwaitSettingTextInPosition(int x, int y, int color) {
+void AwaitSettingTextInPosition(const int x, const int y, const int color) {
     MoveCursor(x, y);
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | color + 3);
 }
@@ -55,7 +55,7 @@ void AwaitSettingTextInPosition(int x, int y, int color) {
  * @param y y轴
  * @param color 颜色
  */
-void SetTextInPosition(char *text, int x, int y, int color) {
+void SetTextInPosition(const char *text, const int x, const int y, const int color) {
     AwaitSettingTextInPosition(x, y, color);
     printf("%s", text);
 }
@@ -91,8 +91,9 @@ void initializeColor() {
     GetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     if (queryDB("TetrisSetting", "ThemeType") == 2) {
         COLORREF colors[16];
-        char *tags[16] = {"BackgroundColor", "BackgroundColor", "BackgroundColor",
-                          "BlockColor_0", "BlockColor_1", "BlockColor_2", "BlockColor_3", "BlockColor_4",
+        const char *tags[16] = {
+            "BackgroundColor", "BackgroundColor", "BackgroundColor",
+            "BlockColor_0", "BlockColor_1", "BlockColor_2", "BlockColor_3", "BlockColor_4",
                           "BlockColor_5", "BlockColor_6", "ForegroundStrongColor", "ForegroundModestColor",
                           "ForegroundMildColor", "FaultColor", "PassColor", "WarningColor"};
         for (int i = 0; i < 16; i++) {
@@ -107,8 +108,8 @@ void initializeColor() {
         }
         memcpy(csbi.ColorTable, colors, sizeof colors); //把颜色配置拷进去
     } else {
-        COLORREF lightColors[16] = {
-                RGB(238, 238, 238), //#ffeeeeee 白色 0
+        constexpr COLORREF lightColors[16] = {
+            RGB(238, 238, 238), //#ffeeeeee 白色 0
                 RGB(238, 238, 238), //#ffeeeeee 白色 1
                 RGB(238, 238, 238), //#ffeeeeee 白色 2
                 RGB(173, 20, 87), //#ffad1457 粉色 0
@@ -124,8 +125,9 @@ void initializeColor() {
                 RGB(229, 57, 53), //#ffe53935 红色 10
                 RGB(67, 160, 71), //#ff43a047 绿色 11
                 RGB(255, 160, 0) //#ffffa000 琥珀色 12
-        }, darkColors[16] = {
-                RGB(12, 12, 12), //#ff121212 黑色 0
+        };
+        constexpr COLORREF darkColors[16] = {
+            RGB(12, 12, 12), //#ff121212 黑色 0
                 RGB(12, 12, 12), //#ff121212 黑色 1
                 RGB(12, 12, 12), //#ff121212 黑色 2
                 RGB(236, 64, 122), //#ffec407a 粉色 0
@@ -152,7 +154,7 @@ void initializeColor() {
  * 移除一些无用功能
  */
 void DisableFeatures() {
-    HANDLE stdInHandle = GetStdHandle(STD_INPUT_HANDLE);
+    const HANDLE stdInHandle = GetStdHandle(STD_INPUT_HANDLE);
     DWORD mode;
     GetConsoleMode(stdInHandle, &mode);
     mode &= ~ENABLE_QUICK_EDIT_MODE;
@@ -165,10 +167,10 @@ void DisableFeatures() {
  * 使窗口居中
  */
 void PlaceWindowCentral() {
-    int screenX = GetSystemMetrics(SM_CXFULLSCREEN), screenY = GetSystemMetrics(SM_CYFULLSCREEN); //屏幕去掉任务栏的长宽
+    const int screenX = GetSystemMetrics(SM_CXFULLSCREEN), screenY = GetSystemMetrics(SM_CYFULLSCREEN); //屏幕去掉任务栏的长宽
     RECT windowRect;
     GetWindowRect(GetConsoleWindow(), &windowRect);
-    int windowX = windowRect.right - windowRect.left, windowY = windowRect.bottom - windowRect.top;
+    const int windowX = windowRect.right - windowRect.left, windowY = windowRect.bottom - windowRect.top;
     MoveWindow(GetConsoleWindow(), (screenX - windowX) / 2, (screenY - windowY) / 3 * 2, windowX, windowY, TRUE);
 }
 
@@ -176,7 +178,7 @@ void PlaceWindowCentral() {
  * 刷新标题状态
  * @param state 当前状态
  */
-void refreshTitleState(char *state) {
+void refreshTitleState(const char *state) {
     char curTitle[450];
     sprintf(curTitle, "title Tetris v%s - Floating Ocean    %s", versionName, state);
     system(curTitle);

@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef TETRIS_STRUCTS_H
+#define TETRIS_STRUCTS_H
+
+#endif //TETRIS_STRUCTS_H
 
 #include <pthread.h>
 #include <conio.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
 #include <windows.h>
 #include <wtsapi32.h>
 #include <richedit.h>
-
-#ifndef TETRIS_STRUCTS_H
-#define TETRIS_STRUCTS_H
-
-#endif //TETRIS_STRUCTS_H
 
 typedef struct {
     int index, rotate, point[2];

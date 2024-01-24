@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
  * 格式化score的输出(前置空格)
  * @param showScore 分数
  */
-void printScore(int showScore) {
+void printScore(const int showScore) {
     if (showScore < 10) printf("      %d 分  ", showScore);
     else if (showScore < 100) printf("     %d 分   ", showScore);
     else printf("     %d 分  ", showScore);
@@ -38,7 +38,7 @@ void initializeScore() {
     AwaitSettingTextInPosition(5, 13, COLOR_SUB_TEXT);
     printScore(challengeModeEnabled ? queryDB("TetrisData", "ChallengeBestRecord") :
                queryDB("TetrisData", "BestRecord"));
-    bool tmp = beyondEnabled;
+    const bool tmp = beyondEnabled;
     beyondEnabled = false;
     animateDarkenRecover(N, COLOR_MAIN_TEXT); //刷新Darken值的ui显示
     beyondEnabled = tmp;

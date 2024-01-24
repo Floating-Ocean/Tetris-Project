@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Floating Ocean
+ * Copyright (C) 2022-2024 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,48 +43,55 @@ void randomizeBlockColor() {
  */
 void initializeBlock() {
     int d[7][4][4][4] = {
-            {//T字形
-                    {{0, 0, 0, 0}, {1, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 1, 0}, {0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 1, 1, 1}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}}
-            },
-            {//L字形
-                    {{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 1, 0}},
-                    {{0, 0, 0, 0}, {1, 1, 1, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}},
-                    {{0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 0, 0, 1}, {0, 1, 1, 1}, {0, 0, 0, 0}}
-            },
-            {//反L字形
-                    {{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 0, 1, 0}, {0, 1, 1, 0}},
-                    {{0, 0, 0, 0}, {1, 0, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 1, 1, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 1, 1, 1}, {0, 0, 0, 1}, {0, 0, 0, 0}}
-            },
-            {//Z字形
-                    {{0, 0, 0, 0}, {1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 1, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 1}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}}
-            },
-            {//反Z字形
-                    {{0, 0, 0, 0}, {0, 1, 1, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}},
-                    {{0, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 0, 1, 1}, {0, 1, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 0}}
-            },
-            {//正方形
-                    {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}}
-            },
-            {//长方形
-                    {{0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}},
-                    {{0, 0, 0, 0}, {1, 1, 1, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}},
-                    {{0, 0, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 0}},
-                    {{0, 0, 0, 0}, {0, 0, 0, 0}, {1, 1, 1, 1}, {0, 0, 0, 0}}
-            }
+        {
+            //T字形
+            {{0, 0, 0, 0}, {1, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}},
+            {{0, 1, 0, 0}, {1, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}},
+            {{0, 1, 0, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
+            {{0, 1, 0, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}}
+        },
+        {
+            //L字形
+            {{0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 1, 1}, {0, 1, 0, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 0}},
+            {{0, 0, 0, 0}, {0, 0, 1, 0}, {1, 1, 1, 0}, {0, 0, 0, 0}}
+        },
+        {
+            //反L字形
+            {{0, 0, 1, 0}, {0, 0, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 1, 1, 1}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}},
+            {{0, 0, 0, 0}, {1, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}}
+        },
+        {
+            //Z字形
+            {{0, 0, 0, 0}, {1, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 1, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 1}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 1, 1, 0}, {0, 1, 0, 0}}
+        },
+        {
+            //反Z字形
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}},
+            {{0, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 0, 1, 1}, {0, 1, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 1, 1, 0}, {0, 0, 1, 0}}
+        },
+        {
+            //正方形
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}},
+            {{0, 0, 0, 0}, {0, 1, 1, 0}, {0, 1, 1, 0}, {0, 0, 0, 0}}
+        },
+        {
+            //长方形
+            {{0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}, {0, 1, 0, 0}},
+            {{0, 0, 0, 0}, {1, 1, 1, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}},
+            {{0, 0, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 0}},
+            {{0, 0, 0, 0}, {0, 0, 0, 0}, {1, 1, 1, 1}, {0, 0, 0, 0}}
+        }
     };
     setInData(d); //导入数据
 }
@@ -138,8 +145,8 @@ void initializeMap() {
  * @param what 当前方块
  * @return 是否合法
  */
-bool checkBlock(Fall what) {
-    Block now = blocks[what.index];
+bool checkBlock(const Fall what) {
+    const Block now = blocks[what.index];
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             if (now.data[what.rotate][i][j] == 1 &&
@@ -157,12 +164,12 @@ bool checkBlock(Fall what) {
  * @param direction 方向
  * @return 是否可移动
  */
-bool checkCanMove(int direction) {
+bool checkCanMove(const int direction) {
     Fall what = {nowFalling.index, nowFalling.rotate, nowFalling.point[0], nowFalling.point[1]}; //clone
     if (direction == DIRECTION_DOWN) what.point[0]++;
     else what.point[1] += direction; //direction: -1, 1
     clearBlock(what.rotate); //暂时清除原方块占位来检测是否可移动
-    bool result = checkBlock(what);
+    const bool result = checkBlock(what);
     insertBlock(what.rotate); //复位
     return result;
 }
@@ -172,12 +179,13 @@ bool checkCanMove(int direction) {
  * @param rotate 旋转方向
  * @param value 方块状态
  */
-void putBlock(int rotate, int value) {
-    Block now = blocks[nowFalling.index];
+void putBlock(const int rotate, const int value) {
+    const Block now = blocks[nowFalling.index];
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++) {
             if (now.data[rotate][i][j] == 1) {
-                currentMap[nowFalling.point[0] + i][nowFalling.point[1] + j].color = value ? now.color : COLOR_MAIN_TEXT; //方块颜色
+                currentMap[nowFalling.point[0] + i][nowFalling.point[1] + j].color =
+                        value ? now.color : COLOR_MAIN_TEXT; //方块颜色
                 currentMap[nowFalling.point[0] + i][nowFalling.point[1] + j].state = value;
             }
         }
@@ -188,8 +196,8 @@ void putBlock(int rotate, int value) {
  * @param rotate 旋转方向
  * @param value 方块状态
  */
-void writeBlock(int rotate, int value) {
-    Block now = blocks[nowFalling.index];
+void writeBlock(const int rotate, const int value) {
+    const Block now = blocks[nowFalling.index];
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++) {
             if (now.data[rotate][i][j] == 1) {
@@ -209,7 +217,7 @@ void writeBlock(int rotate, int value) {
  * @param rotate 旋转方向
  * @see void putBlock(int rotate, int value);
  */
-void insertBlock(int rotate) {
+void insertBlock(const int rotate) {
     putBlock(rotate, 1);
 }
 
@@ -218,7 +226,7 @@ void insertBlock(int rotate) {
  * @param rotate 旋转方向
  * @see void putBlock(int rotate, int value);
  */
-void clearBlock(int rotate) {
+void clearBlock(const int rotate) {
     putBlock(rotate, 0);
 }
 
@@ -227,7 +235,7 @@ void clearBlock(int rotate) {
  * @param rotate 旋转方向
  * @see void writeBlock(int rotate, int value);
  */
-void showBlock(int rotate) {
+void showBlock(const int rotate) {
     writeBlock(rotate, 1);
 }
 
@@ -236,16 +244,17 @@ void showBlock(int rotate) {
  * @param rotate 旋转方向
  * @see void writeBlock(int rotate, int value);
  */
-void hideBlock(int rotate) {
+void hideBlock(const int rotate) {
     writeBlock(rotate, 0);
 }
 
 /**
  * 尝试向指定方向移动方块
  * @param direction 方向
+ * @param ended 是否出现挑战结束
  * @return 是否移动成功
  */
-bool moveBlock(int direction, bool *ended) {
+bool moveBlock(const int direction, bool *ended) {
     if (!checkCanMove(direction)) return false; //检查是否可移动
     hideBlock(nowFalling.rotate);
     clearBlock(nowFalling.rotate); //清空方块
@@ -259,19 +268,22 @@ bool moveBlock(int direction, bool *ended) {
 
 /**
  * 尝试顺时针旋转方块
+ * @param ended 是否出现挑战结束
  * @return 是否旋转成功
  */
 bool rotateBlock(bool *ended) {
     clearBlock(nowFalling.rotate);
-    int preRotate = nowFalling.rotate;
+    const int preRotate = nowFalling.rotate;
     nowFalling.rotate = (nowFalling.rotate + 1) % 4; //4次旋转回到起始
-    bool result = checkBlock(nowFalling);
-    if (result) { //可以旋转
+    const bool result = checkBlock(nowFalling);
+    if (result) {
+        //可以旋转
         hideBlock(preRotate);
         insertBlock(nowFalling.rotate);
         showBlock(nowFalling.rotate);
         checkDarkenLevel(ended);
-    } else { //复位
+    } else {
+        //复位
         nowFalling.rotate = preRotate;
         insertBlock(preRotate);
     }
@@ -282,8 +294,7 @@ bool rotateBlock(bool *ended) {
  * 抽取下一个方块，并输出到对应ui区
  */
 void extractNextBlock() {
-    nextBlock = randBetween(0, 6);
-    nextRotate = randBetween(0, 3);
+    nextBlock = randBetween(0, 6), nextRotate = randBetween(0, 3);
     //输出方块
     SetTextInPosition("  下一个方块  ", 80, 5, COLOR_MAIN_TEXT);
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0 << 4 | blocks[nextBlock].color + 3);
@@ -309,7 +320,7 @@ bool appearBlock() {
         if (checkBlock(nowFalling)) canRnd[++canRndCnt] = i; //枚举所有情况并得到可行域数组
     }
     if (canRndCnt <= 0) return false; //寄了
-    int rnd = randBetween(0, canRndCnt); //抽一个可行解
+    const int rnd = randBetween(0, canRndCnt); //抽一个可行解
     nowFalling.point[1] = canRnd[rnd];
     insertBlock(nowFalling.rotate);
     showBlock(nowFalling.rotate);
@@ -320,7 +331,7 @@ bool appearBlock() {
  * 更新每行有效格的信息
  */
 void updateValidBlocks() {
-    for(int i=0;i<N;i++) {
+    for (int i = 0; i < N; i++) {
         validLine[i].count = 0;
         memset(validLine[i].validOnes, 0, sizeof validLine[i].validOnes);
         for (int j = 0; j < N; j++) if (currentMap[i][j].state) validLine[i].validOnes[validLine[i].count++] = j;
@@ -334,11 +345,12 @@ void updateValidBlocks() {
  */
 void judgeLines() {
     int startLine = 0, nowRemoved = 0; //startLine用于小优化一下消行后需要更新的范围
-    int comboScore[4] = {1, 2, 4, 8}; //combo对应的分数倍乘(>=4combo对应8)
+    constexpr int comboScore[4] = {1, 2, 4, 8}; //combo对应的分数倍乘(>=4combo对应8)
     updateValidBlocks(); //枚举统计每行的有效方块个数
     for (int i = 0; i < N; i++) {
         if (validLine[i].count == 0) startLine++; //该行没方块，缩小更新范围
-        else if (validLine[i].count == N) { //该行满行，消除下移
+        else if (validLine[i].count == N) {
+            //该行满行，消除下移
             for (int w = 0; w < N; w++) {
                 if (w % 2 == 0) Sleep(10);
                 if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - w), 3 + 23 - i, currentMap[i][w].color);
@@ -349,19 +361,22 @@ void judgeLines() {
                 validLine[p + 1] = validLine[p];
                 for (int w = 0; w < N; w++) {
                     currentMap[p + 1][w] = currentMap[p][w];
-                    if(mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - w), 2 + 23 - p, currentMap[p + 1][w].color);
+                    if (mirrorEnabled)
+                        AwaitSettingTextInPosition(26 + 2 * (23 - w), 2 + 23 - p,
+                                                   currentMap[p + 1][w].color);
                     else AwaitSettingTextInPosition(26 + 2 * w, 4 + p, currentMap[p + 1][w].color);
                     printf(currentMap[p + 1][w].state ? "■" : "  ");
                 }
             }
             startLine++;
-            nowRemoved++;//删除了一行
+            nowRemoved++; //删除了一行
         }
     }
-    if (nowRemoved > 0) { //统计加分并输出到ui
+    if (nowRemoved > 0) {
+        //统计加分并输出到ui
         int addScore =
                 comboScore[min(3, nowRemoved - 1)] * nowRemoved * currentGameMode.multiply; //漏写了removedLine哈哈哈，我好蠢
-        if(startLine == N) addScore += 150 * currentGameMode.multiply; //全部被玩家消除完
+        if (startLine == N) addScore += 150 * currentGameMode.multiply; //全部被玩家消除完
         score += addScore;
         removedLines += nowRemoved; //统计删除的行
         if (enablePreview) refreshPreview();
@@ -372,14 +387,15 @@ void judgeLines() {
         sprintf(added, "Score Got:  %d！", addScore);
         Sleep(25); //一闪而过感知不强
         showRandomActionHint(added);
-        if(startLine < N || !challengeModeEnabled) recoverDarkenLevel(false); //成功消行，恢复Darken值
+        if (startLine < N || !challengeModeEnabled) recoverDarkenLevel(false); //成功消行，恢复Darken值
         showRandomActionHint("");
         hidePreview(false);
-        if(startLine == N && challengeModeEnabled){ //全部消完，判定挑战模式成功
+        if (startLine == N && challengeModeEnabled) {
+            //全部消完，判定挑战模式成功
             challengeComplete = true; //强制成功
             endGame(false);
         }
-        if(mirrorEnabled) mirrorTotally(); //消行成功就转回来
+        if (mirrorEnabled) mirrorTotally(); //消行成功就转回来
         appearAt = 0; //恢复下落初始位置
     }
 }
@@ -405,9 +421,10 @@ void showSavedBlock() {
  */
 void saveBlock() {
     if (savedBlock != -1 && savedRotate != -1) {
-        Fall what = {savedBlock, savedRotate, nowFalling.point[0], nowFalling.point[1]};
+        const Fall what = {savedBlock, savedRotate, nowFalling.point[0], nowFalling.point[1]};
         clearBlock(nowFalling.rotate);
-        if (checkBlock(what)) { //能放置，就交换
+        if (checkBlock(what)) {
+            //能放置，就交换
             savedBlock = nowFalling.index;
             savedRotate = nowFalling.rotate;
             hideBlock(nowFalling.rotate);
@@ -416,7 +433,8 @@ void saveBlock() {
             showBlock(nowFalling.rotate);
             showSavedBlock();
         } else insertBlock(nowFalling.rotate);
-    } else { //没存方块，直接存入并显示下一个方块
+    } else {
+        //没存方块，直接存入并显示下一个方块
         savedBlock = nowFalling.index;
         savedRotate = nowFalling.rotate;
         clearBlock(nowFalling.rotate);
