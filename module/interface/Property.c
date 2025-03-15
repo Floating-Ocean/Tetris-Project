@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 #include "../../collect/Collection.h"
 
-//三个难度
-GameMode MODE_EZ = {"EZ", 0x00, 500000, 1},
-        MODE_HD = {"HD", 0x01, 300, 2},
-        MODE_IN = {"IN", 0x02, 200, 5};
+// 三个难度
+GameMode MODE_EZ = {"EZ", 0x00, 500, 1},
+         MODE_HD = {"HD", 0x01, 300, 2},
+         MODE_IN = {"IN", 0x02, 200, 5};
 GameMode currentGameMode;
 
 /**
@@ -29,17 +29,17 @@ GameMode currentGameMode;
  * @param borderColor 更改边框颜色
  * @param text 显示内容
  */
-void printOne(const int index, const int textColor, const int borderColor, const char **text) {
-    AwaitSettingTextInPosition(5, 5 + index * 8, borderColor);
+void changeDifficultySection(const int index, const int textColor, const int borderColor, const char **text) {
+    prepareTextPlacing(5, 5 + index * 8, borderColor);
     for (int i = 0; i < 36; i++) printf("■");
     for (int i = 0; i < 4; i++) {
-        MoveCursor(5, 6 + index * 8 + i);
+        moveCursor(5, 6 + index * 8 + i);
         for (int j = 0; j < 39; j++) printf("  ");
     }
-    MoveCursor(5, 10 + index * 8);
+    moveCursor(5, 10 + index * 8);
     for (int i = 0; i < 36; i++) printf("■");
-    SetTextInPosition(text[0], 8, 7 + index * 8, textColor);
-    SetTextInPosition(text[1], 8, 8 + index * 8, textColor);
+    placeText(text[0], 8, 7 + index * 8, textColor);
+    placeText(text[1], 8, 8 + index * 8, textColor);
 }
 
 /**
@@ -50,8 +50,8 @@ void printOne(const int index, const int textColor, const int borderColor, const
  */
 void showCurrentMode(const char **text, const GameMode mode, const int color) {
     currentGameMode = mode;
-    if (!beyondEnabled) printOne(mode.mode, color, color, text);
-    AwaitSettingTextInPosition(5, 2, COLOR_MAIN_TEXT);
+    if (!beyondEnabled) changeDifficultySection(mode.mode, color, color, text);
+    prepareTextPlacing(5, 2, COLOR_MAIN_TEXT);
     printf("%s%s%s", "当前选中游戏模式：  ",
            beyondEnabled ? "BYD" : mode.mode == 0x00 ? "EZ" : mode.mode == 0x01 ? "HD" : "IN",
            " Mode   按空格键继续.");
@@ -61,22 +61,23 @@ void showCurrentMode(const char **text, const GameMode mode, const int color) {
  * 未选中，恢复原标题
  */
 void recoverTitle() {
-    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
+    placeText("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
 }
 
 /**
  * 通知玩家触发挑战模式，并介绍游戏规则
  */
-void noticeChallengeEnable() {
-    system("cls & mode con cols=90 lines=20");
-    PlaceWindowCentral();
-    refreshTitleState("Challenge Mode Notification");
-    SetTextInPosition(" — Challenge Mode Enabled — ", 29, 4, COLOR_FAULT);
-    SetTextInPosition("本模式下所有难度惩罚次数", 24, 10, COLOR_MAIN_TEXT);
-    SetTextInPosition("3次", 48, 10, COLOR_WARN);
-    SetTextInPosition("判定", 51, 10, COLOR_MAIN_TEXT);
-    SetTextInPosition("游戏失败", 55, 10, COLOR_FAULT);
-    SetTextInPosition("按 任 意 键 继 续", 36, 14, COLOR_MAIN_TEXT);
+void noticeChallengeEnable() { // NOLINT(*-no-recursion)
+    clearConsole();
+    resizeWindow(90, 20);
+    centralizeWindow();
+    changeSubtitle("Challenge Mode Notification");
+    placeText(" — Challenge Mode Enabled — ", 29, 4, COLOR_FAULT);
+    placeText("本模式下所有难度惩罚次数", 24, 10, COLOR_MAIN_TEXT);
+    placeText("3次", 48, 10, COLOR_WARN);
+    placeText("判定", 51, 10, COLOR_MAIN_TEXT);
+    placeText("游戏失败", 55, 10, COLOR_FAULT);
+    placeText("按 任 意 键 继 续", 36, 14, COLOR_MAIN_TEXT);
     system("pause > nul");
     challengeModeEnabled = true;
     showSelectView();
@@ -85,11 +86,12 @@ void noticeChallengeEnable() {
 /**
  * 显示选择页并处理交互
  */
-bool showSelectView() {
-    system("cls & mode con cols=82 lines=29");
-    PlaceWindowCentral();
-    refreshTitleState(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
-    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
+bool showSelectView() { // NOLINT(*-no-recursion)
+    clearConsole();
+    resizeWindow(82, 29);
+    centralizeWindow();
+    changeSubtitle(challengeModeEnabled ? "Mode Choosing    Challenge Mode" : "Mode Choosing");
+    placeText("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
     const char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
     const char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
     const char *in[2] = {
@@ -97,39 +99,38 @@ bool showSelectView() {
                                ? "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."
                                : "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏无法暂停."
     };
-    printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-    printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
-    printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+    changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+    changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+    changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
     bool selected = false, confirm = false;
-    constexpr int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13};
-    constexpr int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80};
     int currentChallengeInputIndex = -1, currentBeyondInputIndex = -1;
     bool awaitDirectionInput = false;
     while (!confirm) {
-        //未决定难度，等待输入
+        // 未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
             if (input == 224) {
-                awaitDirectionInput = true; //方向键前置符
+                awaitDirectionInput = true; // 方向键前置符
                 continue;
             }
             if (awaitDirectionInput) {
+                constexpr int beyondInput[] = {72, 72, 80, 80, 75, 75, 77, 77, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80};
                 awaitDirectionInput = false;
                 if (beyondInput[++currentBeyondInputIndex] == input) {
                     if (currentBeyondInputIndex == 17) {
                         return showBeyondSelectView();
                     }
                 } else currentBeyondInputIndex = -1;
-                //做一个方向键循环选择
+                // 做一个方向键循环选择
                 if (!selected && (input == 72 || input == 75 || input == 80 || input == 77)) {
-                    input = 101; //没有选中按方向键选中第一难度
+                    input = 101; // 没有选中按方向键选中第一难度
                 } else if (input == 72 || input == 75) {
-                    //key up & left.
+                    // key up & left
                     if (currentGameMode.mode == MODE_EZ.mode) input = 105;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 101;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 104;
                 } else if (input == 80 || input == 77) {
-                    //key down & right.
+                    // key down & right
                     if (currentGameMode.mode == MODE_EZ.mode) input = 104;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 105;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 101;
@@ -140,7 +141,8 @@ bool showSelectView() {
                     return false;
                 }
                 if (!challengeModeEnabled) {
-                    //读取输入challenge回车
+                    constexpr int challengeInput[] = {99, 104, 97, 108, 108, 101, 110, 103, 101, 13};
+                    // 读取输入 challenge + 回车
                     if (challengeInput[++currentChallengeInputIndex] == input ||
                         (currentChallengeInputIndex < 9 && challengeInput[currentChallengeInputIndex] - 32 == input)) {
                         if (currentChallengeInputIndex == 9) {
@@ -152,15 +154,15 @@ bool showSelectView() {
             }
             switch (input) {
                 case 69:
-                case 101: //E
+                case 101: // E
                     if (selected) {
                         if (currentGameMode.mode == MODE_EZ.mode) {
-                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
                             selected = false;
                             recoverTitle();
                         } else {
-                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
-                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
                             showCurrentMode(ez, MODE_EZ, COLOR_PASS);
                         }
                     } else {
@@ -169,15 +171,15 @@ bool showSelectView() {
                     }
                     break;
                 case 72:
-                case 104: //H
+                case 104: // H
                     if (selected) {
                         if (currentGameMode.mode == MODE_HD.mode) {
-                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
                             selected = false;
                             recoverTitle();
                         } else {
-                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
                             showCurrentMode(hd, MODE_HD, COLOR_WARN);
                         }
                     } else {
@@ -186,15 +188,15 @@ bool showSelectView() {
                     }
                     break;
                 case 73:
-                case 105: //I
+                case 105: // I
                     if (selected) {
                         if (currentGameMode.mode == MODE_IN.mode) {
-                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
                             selected = false;
                             recoverTitle();
                         } else {
-                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
                             showCurrentMode(in, MODE_IN, COLOR_FAULT);
                         }
                     } else {
@@ -202,10 +204,11 @@ bool showSelectView() {
                         showCurrentMode(in, MODE_IN, COLOR_FAULT);
                     }
                     break;
-                case 32: //决定!
-                case 13: //回车也可以确定啦
+                case 32: // 决定!
+                case 13: // 回车也可以确定啦
                     confirm = selected;
                     break;
+                default: ;
             }
         }
     }
@@ -213,40 +216,41 @@ bool showSelectView() {
 }
 
 bool showBeyondSelectView() {
-    system("cls & mode con cols=82 lines=37");
-    PlaceWindowCentral();
-    refreshTitleState("Inner Mode Choosing    Challenge Mode");
-    SetTextInPosition("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
+    clearConsole();
+    resizeWindow(82, 37);
+    centralizeWindow();
+    changeSubtitle("Inner Mode Choosing    Challenge Mode");
+    placeText("选择一个游戏模式并按下对应按键以继续...         ", 5, 2, COLOR_MAIN_TEXT);
     const char *ez[2] = {"E   Easy Mode", "    半秒一次下落，长时间未消行将随机删除几个有效行内的几个格子."};
     const char *hd[2] = {"H   Hard Mode", "    1/3秒一次下落，长时间未消行将触发随机惩罚，大概率消除格子."};
     const char *in[2] = {"I   Insane Mode", "    1/5秒一次下落，长时间未消行将触发随机惩罚，游戏可以暂停."};
     const char *byd[2] = {"B   Beyond Mode", "    在Insane Mode的基础上，消行后进度条只恢复较少的值."};
-    printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-    printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
-    printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
-    printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+    changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+    changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+    changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+    changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
     bool selected = false, confirm = false, awaitDirectionInput = false;
     while (!confirm) {
-        //未决定难度，等待输入
+        // 未决定难度，等待输入
         if (kbhit()) {
             int input = getch();
             if (input == 224) {
-                awaitDirectionInput = true; //方向键前置符
+                awaitDirectionInput = true; // 方向键前置符
                 continue;
             }
             if (awaitDirectionInput) {
                 awaitDirectionInput = false;
-                //做一个方向键循环选择
+                // 做一个方向键循环选择
                 if (!selected && (input == 72 || input == 75 || input == 80 || input == 77)) {
-                    input = 101; //没有选中按方向键选中第一难度
+                    input = 101; // 没有选中按方向键选中第一难度
                 } else if (input == 72 || input == 75) {
-                    //key up & left.
+                    // key up & left.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 98;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 101;
                     else if (beyondEnabled) input = 105;
                     else if (currentGameMode.mode == MODE_IN.mode) input = 104;
                 } else if (input == 80 || input == 77) {
-                    //key down & right.
+                    // key down & right.
                     if (currentGameMode.mode == MODE_EZ.mode) input = 104;
                     else if (currentGameMode.mode == MODE_HD.mode) input = 105;
                     else if (beyondEnabled) input = 101;
@@ -260,101 +264,102 @@ bool showBeyondSelectView() {
             }
             switch (input) {
                 case 69:
-                case 101: //E
+                case 101: // E
                     if (selected) {
                         if (currentGameMode.mode == MODE_EZ.mode) {
-                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = false;
-                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
-                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
-                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             showCurrentMode(ez, MODE_EZ, COLOR_PASS);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = false;
                         showCurrentMode(ez, MODE_EZ, COLOR_PASS);
-                        printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                        changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                     }
                     break;
                 case 72:
-                case 104: //H
+                case 104: // H
                     if (selected) {
                         if (currentGameMode.mode == MODE_HD.mode) {
-                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
-                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = false;
-                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
-                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             showCurrentMode(hd, MODE_HD, COLOR_WARN);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = false;
                         showCurrentMode(hd, MODE_HD, COLOR_WARN);
-                        printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                        changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                     }
                     break;
                 case 73:
-                case 105: //I
+                case 105: // I
                     if (selected) {
                         if (!beyondEnabled && currentGameMode.mode == MODE_IN.mode) {
-                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
-                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = false;
-                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
-                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             showCurrentMode(in, MODE_IN, COLOR_FAULT);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = false;
                         showCurrentMode(in, MODE_IN, COLOR_FAULT);
-                        printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                        changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                     }
                     break;
                 case 66:
-                case 98: //B
+                case 98: // B
                     if (selected) {
                         if (beyondEnabled) {
-                            printOne(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
+                            changeDifficultySection(3, COLOR_SUB_TEXT, COLOR_MILD, byd);
                             selected = false;
                             beyondEnabled = false;
                             recoverTitle();
                         } else {
                             beyondEnabled = true;
-                            printOne(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
-                            printOne(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
-                            printOne(2, COLOR_SUB_TEXT, COLOR_MILD, in);
-                            printOne(3, COLOR_FAULT, COLOR_FAULT, byd);
+                            changeDifficultySection(0, COLOR_SUB_TEXT, COLOR_MILD, ez);
+                            changeDifficultySection(1, COLOR_SUB_TEXT, COLOR_MILD, hd);
+                            changeDifficultySection(2, COLOR_SUB_TEXT, COLOR_MILD, in);
+                            changeDifficultySection(3, COLOR_FAULT, COLOR_FAULT, byd);
                             showCurrentMode(in, MODE_IN, COLOR_FAULT);
                         }
                     } else {
                         selected = true;
                         beyondEnabled = true;
-                        printOne(3, COLOR_FAULT, COLOR_FAULT, byd);
+                        changeDifficultySection(3, COLOR_FAULT, COLOR_FAULT, byd);
                         showCurrentMode(in, MODE_IN, COLOR_FAULT);
                     }
                     break;
-                case 32: //决定!
-                case 13: //回车也可以确定啦
+                case 32: // 决定!
+                case 13: // 回车也可以确定啦
                     confirm = selected;
                     break;
+                default: ;
             }
         }
     }
@@ -362,7 +367,7 @@ bool showBeyondSelectView() {
 }
 
 /**
- * 计算评级Level
+ * 计算评级 Level
  * @return level
  */
 int calculateLevel() {
@@ -376,10 +381,10 @@ int calculateLevel() {
  * 刷新状态查看
  */
 void refreshPreview() {
-    AwaitSettingTextInPosition(4, 1, COLOR_SUB_TEXT);
+    prepareTextPlacing(4, 1, COLOR_SUB_TEXT);
     printf("                                                                               ");
     if (!enablePreview) return;
-    AwaitSettingTextInPosition(4, 1, COLOR_SUB_TEXT);
+    prepareTextPlacing(4, 1, COLOR_SUB_TEXT);
     printf("Difficulty:  %s. %d    Move Per Second:  %.02f    Removed Lines:  %d",
            beyondEnabled ? "BYD" : currentGameMode.modeName,
            (int) ((mirrorEnabled ? 2.0f : 1.0f) * (beyondEnabled ? 1.5f : 1.0f) * (float) calculateLevel()),

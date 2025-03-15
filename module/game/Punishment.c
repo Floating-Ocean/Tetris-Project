@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,29 +31,30 @@ bool shuffleBlocks() {
     showRandomActionHint("Blocks shuffled!");
     for (int i = start; i < N; i++) {
         if (validLine[i].count == 0) continue;
-        for (int p = 0; p < N; p++) { //打乱
+        for (int p = 0; p < N; p++) { // 打乱
             const int ind = randBetween(0, N - 1);
             const Point cur = currentMap[i][p];
             currentMap[i][p] = currentMap[i][ind];
             currentMap[i][ind] = cur;
         }
-        for (int p = 0; p < N; p++) { //做动画
+        for (int p = 0; p < N; p++) { // 做动画
             if(p % 4 == 0) Sleep(1);
             if (mirrorEnabled)
-                AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - i, currentMap[i][p].color);
-            else AwaitSettingTextInPosition(26 + 2 * p, 3 + i, currentMap[i][p].color);
+                prepareTextPlacing(26 + 2 * (23 - p), 3 + 23 - i, currentMap[i][p].color);
+            else prepareTextPlacing(26 + 2 * p, 3 + i, currentMap[i][p].color);
             printf(currentMap[i][p].state ? "■" : "  ");
         }
     }
     updateValidBlocks();
-    recoverDarkenLevel(true); //恢复Darken值
+    recoverDarkenLevel(true); // 恢复Darken值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
     return true;
 }
 
 /**
- * 随机将之后出现的方块的起始位置下移x格
+ * 随机将之后出现的方块的起始位置下移 x 格
  */
 void sinkElevation() {
     hidePreview(true);
@@ -63,18 +64,19 @@ void sinkElevation() {
         mx = i;
     }
     int minus = randBetween(0, mx);
-    minus = max(1, minus); //保证至少向下移一层（不能移也不代表寄了
+    minus = max(1, minus); // 保证至少向下移一层（不能移也不代表寄了
     char notice[78];
     sprintf(notice, "Elevation sunk %d blocks!", minus);
     showRandomActionHint(notice);
     appearAt = minus;
-    recoverDarkenLevel(true); //恢复Darken值
+    recoverDarkenLevel(true); // 恢复 Darken 值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
 }
 
 /**
- * 减分，范围为1-n
+ * 减分，范围为 [1, n]
  * @param n 最大值
  */
 void minusScore(const int n) {
@@ -85,10 +87,11 @@ void minusScore(const int n) {
     showRandomActionHint(notice);
     score -= minus;
     score = max(0, score);
-    AwaitSettingTextInPosition(5, 7, COLOR_SUB_TEXT);
+    prepareTextPlacing(5, 7, COLOR_SUB_TEXT);
     printScore(score);
     Sleep(500);
-    recoverDarkenLevel(true); //恢复Darken值
+    recoverDarkenLevel(true); // 恢复 Darken 值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
 }
@@ -110,13 +113,14 @@ void insertBarrier() {
             currentMap[i][insertRight].state = 1;
             currentMap[i][insertLeft].color = COLOR_MAIN_TEXT;
             currentMap[i][insertRight].color = COLOR_MAIN_TEXT;
-            AwaitSettingTextInPosition(26 + 2 * insertLeft, 3 + i, currentMap[i][insertLeft].color);
+            prepareTextPlacing(26 + 2 * insertLeft, 3 + i, currentMap[i][insertLeft].color);
             printf(currentMap[i][insertLeft].state ? "■" : "  ");
-            AwaitSettingTextInPosition(26 + 2 * insertRight, 3 + i, currentMap[i][insertRight].color);
+            prepareTextPlacing(26 + 2 * insertRight, 3 + i, currentMap[i][insertRight].color);
             printf(currentMap[i][insertRight].state ? "■" : "  ");
         } else break;
     }
-    recoverDarkenLevel(true); //恢复Darken值
+    recoverDarkenLevel(true); // 恢复 Darken 值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
 }
@@ -131,15 +135,16 @@ void mirrorPartially() {
         for (int j = 0; j < N / 2; j++) {
             const bool animate = currentMap[i][j].state + currentMap[i][N - j - 1].state > 0;
             swap(&currentMap[i][j], &currentMap[i][N - j - 1], sizeof(Point));
-            AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
+            prepareTextPlacing(26 + 2 * j, 3 + i, currentMap[i][j].color);
             if (animate) Sleep(10);
             printf(currentMap[i][j].state ? "■" : "  ");
-            AwaitSettingTextInPosition(26 + 2 * (N - j - 1), 3 + i, currentMap[i][N - j - 1].color);
+            prepareTextPlacing(26 + 2 * (N - j - 1), 3 + i, currentMap[i][N - j - 1].color);
             if (animate) Sleep(10);
             printf(currentMap[i][N - j - 1].state ? "■" : "  ");
         }
     }
-    recoverDarkenLevel(true); //恢复Darken值
+    recoverDarkenLevel(true); // 恢复 Darken 值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
 }
@@ -155,7 +160,7 @@ void mirrorTotally() {
         int cnt = 0;
         for (int j = 0; j < N; j++) {
             cnt += currentMap[i][j].state;
-            AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
+            prepareTextPlacing(26 + 2 * j, 3 + i, currentMap[i][j].color);
             printf("  ");
         }
         if (cnt > 0) Sleep(10);
@@ -165,14 +170,15 @@ void mirrorTotally() {
         int cnt = 0;
         for (int j = 0; j < N; j++) {
             cnt += currentMap[i][j].state;
-            if (mirrorEnabled) AwaitSettingTextInPosition(26 + 2 * (23 - j), 3 + 23 - i, currentMap[i][j].color);
-            else AwaitSettingTextInPosition(26 + 2 * j, 3 + i, currentMap[i][j].color);
+            if (mirrorEnabled) prepareTextPlacing(26 + 2 * (23 - j), 3 + 23 - i, currentMap[i][j].color);
+            else prepareTextPlacing(26 + 2 * j, 3 + i, currentMap[i][j].color);
             printf(currentMap[i][j].state ? "■" : "  ");
         }
         if (cnt > 0) Sleep(10);
     }
     showBlock(nowFalling.rotate);
-    if (mirrorEnabled) recoverDarkenLevel(true); //恢复Darken值
+    if (mirrorEnabled) recoverDarkenLevel(true); // 恢复 Darken 值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
 }
@@ -184,12 +190,12 @@ void mirrorTotally() {
 bool eraseBlockRandomly() {
     hidePreview(true);
     showRandomActionHint("Block Erased!");
-    //找出所有符合条件的有效点
+    // 找出所有符合条件的有效点
     int valid[N * N][2], cnt = 0, currentLine = N - 1, needLine =
             currentGameMode.mode == MODE_EZ.mode ? 8 :
-            currentGameMode.mode == MODE_HD.mode ? 16 : N; //删格有效行数量  EZ: 8, HD: 16, In: 24
+            currentGameMode.mode == MODE_HD.mode ? 16 : N; // 删格有效行数量  EZ: 8, HD: 16, In: 24
     for (int j = 0; j < needLine; j++) {
-        if (validLine[currentLine].count == 0) needLine = min(N, needLine + 3); //跳过无效行，直到边界为止
+        if (validLine[currentLine].count == 0) needLine = min(N, needLine + 3); // 跳过无效行，直到边界为止
         else {
             for (int p = 0; p < validLine[currentLine].count; p++) {
                 valid[cnt][0] = currentLine;
@@ -199,25 +205,27 @@ bool eraseBlockRandomly() {
         }
         currentLine--;
     }
-    for (int i = 0; i <= min(randBetween(3 * 3, 9 * 9), 6 + score / 3); i++) { //修复刷分数的bug
+    for (int i = 0; i <= min(randBetween(3 * 3, 9 * 9), 6 + score / 3); i++) { // 修复刷分数的 bug
         if (cnt == 0) {
+            Sleep(100); // 一闪而过感知不强
             showRandomActionHint("");
             hidePreview(false);
-            return false; //给消没了
+            return false; // 给消没了
         }
         const int randomIndex = randBetween(0, cnt - 1),
-                *randomDelete = valid[randomIndex], delY = randomDelete[0], delX = randomDelete[1]; //抽一个幸运方块将其干没
+                *randomDelete = valid[randomIndex], delY = randomDelete[0], delX = randomDelete[1]; // 抽一个幸运方块将其干没
         valid[randomIndex][0] = valid[cnt - 1][0];
         valid[randomIndex][1] = valid[cnt - 1][1];
         cnt--;
         currentMap[delY][delX].state = 0;
         currentMap[delY][delX].color = 15;
-        if (mirrorEnabled) MoveCursor(26 + 2 * (23 - delX), 3 + 23 - delY);
-        else MoveCursor(26 + 2 * delX, 3 + delY);
+        if (mirrorEnabled) moveCursor(26 + 2 * (23 - delX), 3 + 23 - delY);
+        else moveCursor(26 + 2 * delX, 3 + delY);
         printf("  ");
     }
-    updateValidBlocks(); //更新有效方格
-    recoverDarkenLevel(true); //恢复Darken值
+    updateValidBlocks(); // 更新有效方格
+    recoverDarkenLevel(true); // 恢复 Darken 值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
     return cnt != 0;
@@ -231,31 +239,32 @@ bool exchangeRowRandomly() {
     hidePreview(true);
     int valid[N], cnt = 0;
     for (int j = nowFalling.point[0] + 4; j < N; j++)
-        if (validLine[j].count > 0) valid[cnt++] = j; //从正在下落的方块的绝对底部到第N行找
+        if (validLine[j].count > 0) valid[cnt++] = j; // 从正在下落的方块的绝对底部到第 N 行找
     if (cnt > 1) {
         showRandomActionHint("Line Blocks Exchanged!");
         int exchangeA = randBetween(0, cnt - 1), exchangeB = randBetween(0, cnt - 2);
-        if (exchangeB >= exchangeA) exchangeB++; //防止A和B自交(?
+        if (exchangeB >= exchangeA) exchangeB++; // 防止 A 和 B 自交 (?
         exchangeA = valid[exchangeA];
         exchangeB = valid[exchangeB];
         for (int p = 0; p < N; p++) {
             swap(&currentMap[exchangeA][p], &currentMap[exchangeB][p], sizeof(Point));
             if (currentMap[exchangeA][p].state == currentMap[exchangeB][p].state &&
                 currentMap[exchangeA][p].color == currentMap[exchangeB][p].color)
-                continue; //如果一模一样就没必要动画了
+                continue; // 如果一模一样就没必要动画了
             Sleep(1);
             if (mirrorEnabled)
-                AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeA, currentMap[exchangeA][p].color);
-            else AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeA, currentMap[exchangeA][p].color);
+                prepareTextPlacing(26 + 2 * (23 - p), 3 + 23 - exchangeA, currentMap[exchangeA][p].color);
+            else prepareTextPlacing(26 + 2 * p, 3 + exchangeA, currentMap[exchangeA][p].color);
             printf(currentMap[exchangeA][p].state ? "■" : "  ");
             Sleep(1);
             if (mirrorEnabled)
-                AwaitSettingTextInPosition(26 + 2 * (23 - p), 3 + 23 - exchangeB, currentMap[exchangeB][p].color);
-            else AwaitSettingTextInPosition(26 + 2 * p, 3 + exchangeB, currentMap[exchangeB][p].color);
+                prepareTextPlacing(26 + 2 * (23 - p), 3 + 23 - exchangeB, currentMap[exchangeB][p].color);
+            else prepareTextPlacing(26 + 2 * p, 3 + exchangeB, currentMap[exchangeB][p].color);
             printf(currentMap[exchangeB][p].state ? "■" : "  ");
         }
-        updateValidBlocks(); //更新有效方格
-        recoverDarkenLevel(true); //恢复Darken值
+        updateValidBlocks(); // 更新有效方格
+        recoverDarkenLevel(true); // 恢复 Darken 值
+        Sleep(100); // 一闪而过感知不强
         showRandomActionHint("");
         hidePreview(false);
         return true;
@@ -273,36 +282,37 @@ void changeSpeedRandomly() {
     showRandomActionHint(down ? "Speed Down!" : "Speed Up!");
     if (beyondEnabled)
         speedMultiply = down ? (double) randBetween(1041, 1388) / 1000
-                             : (double) randBetween(156, 400) / 1000; //0.72~0.96, 2.50~6.40倍速，精度0.01
+                             : (double) randBetween(156, 400) / 1000; // 0.72 ~ 0.96, 2.50 ~ 6.40 倍速，精度 0.01
     else
         speedMultiply = down ? (double) randBetween(1250, 1562) / 1000
-                             : (double) randBetween(250, 500) / 1000; //0.64~0.80, 2.00~4.00倍速，精度0.01
+                             : (double) randBetween(250, 500) / 1000; // 0.64 ~ 0.80, 2.00 ~ 4.00 倍速，精度 0.01
     if (enablePreview) refreshPreview();
     speedMultiplyEnabledTime = GetTickCount();
-    recoverDarkenLevel(true); //恢复Darken值
+    recoverDarkenLevel(true); // 恢复 Darken 值
+    Sleep(100); // 一闪而过感知不强
     showRandomActionHint("");
     hidePreview(false);
 }
 
 /**
- * 覆盖Darken列颜色，做动画 (down -> up)
+ * 覆盖 Darken 列颜色，做动画 (down -> up)
  * @param down down
  * @param up up
  * @param color 方格颜色
  */
 void animateDarkenCover(const int down, const int up, const int color) {
     for (int i = down; i >= up; i--) {
-        Sleep(2); //微小延时来实现类似于动画的效果
-        AwaitSettingTextInPosition(24, 2 + i, color);
+        Sleep(2); // 微小延时来实现类似于动画的效果
+        prepareTextPlacing(24, 2 + i, color);
         printf("■");
-        AwaitSettingTextInPosition(74, 2 + i, color);
+        prepareTextPlacing(74, 2 + i, color);
         printf("■");
     }
 }
 
 /**
- * 恢复Darken值，做动画
- * @param level 起始Darken值 (level -> 0)
+ * 恢复 Darken 值，做动画
+ * @param level 起始 Darken 值 (level -> 0)
  * @param color 补上的方格颜色
  */
 void animateDarkenRecover(const int level, const int color) {
@@ -310,12 +320,12 @@ void animateDarkenRecover(const int level, const int color) {
 }
 
 /**
- * 恢复Darken值
+ * 恢复 Darken 值
  * @param fail 成功消行: true, 超时: false
  */
 void recoverDarkenLevel(const bool fail) {
-    animateDarkenRecover(darkLevel, fail ? COLOR_FAULT : COLOR_PASS); //状态颜色提示
-    animateDarkenRecover(darkLevel, COLOR_MAIN_TEXT); //恢复到初始颜色
+    animateDarkenRecover(darkLevel, fail ? COLOR_FAULT : COLOR_PASS); // 状态颜色提示
+    animateDarkenRecover(darkLevel, COLOR_MAIN_TEXT); // 恢复到初始颜色
     darkLevel = (beyondEnabled ? max(1, (darkLevel - max(-5, 9 - score / 12))) : 1) - 1;
     trialMove = 0;
 }
@@ -324,9 +334,9 @@ void recoverDarkenLevel(const bool fail) {
  * 图形化显示Darken值的减少
  */
 void downDrawDarkenLevel() {
-    AwaitSettingTextInPosition(24, 2 + darkLevel, COLOR_MILD);
+    prepareTextPlacing(24, 2 + darkLevel, COLOR_MILD);
     printf("■");
-    AwaitSettingTextInPosition(74, 2 + darkLevel, COLOR_MILD);
+    prepareTextPlacing(74, 2 + darkLevel, COLOR_MILD);
     printf("■");
 }
 
@@ -335,43 +345,43 @@ void downDrawDarkenLevel() {
  * @param action 类型文本
  */
 void showRandomActionHint(const char *action) {
-    AwaitSettingTextInPosition(4, 1, COLOR_MAIN_TEXT);
+    prepareTextPlacing(4, 1, COLOR_MAIN_TEXT);
     printf("%-24s", action);
 }
 
 
 /**
- * 检查是否需要扣除Darken值
+ * 检查是否需要扣除 Darken 值
  * @param ended 是否出现挑战结束
  */
 void checkDarkenLevel(bool *ended) {
     constexpr double increase[3] = {0.16, 0.32, 0.64};
-    if (trialMove == max(2, (int) (18 - (double) score / (100 * increase[currentGameMode.mode])))) { //达到阈值
+    if (trialMove == max(2, (int) (18 - (double) score / (100 * increase[currentGameMode.mode])))) { // 达到阈值
         trialMove = 0;
         darkLevel++;
         if (darkLevel < N) downDrawDarkenLevel();
-        else { //记录一次惩罚
+        else { // 记录一次惩罚
             if (challengeModeEnabled) {
                 challengeModeFault++;
-                if (challengeModeFault >= 3) { //挑战失败
+                if (challengeModeFault >= 3) { // 挑战失败
                     forceEndGame = true;
-                    *ended = true; //传递 挑战失败 消息给主线程
+                    *ended = true; // 传递 "挑战失败" 消息给主线程
                     endGame(false);
                     return;
                 }
             }
-            speedMultiply = 1.0; //复位速度
+            speedMultiply = 1.0; // 复位速度
             if (currentGameMode.mode == MODE_IN.mode) {
                 bool toErase = false;
                 const int type = randBetween(0, 10000);
-                if (type <= 2500 && exchangeRowRandomly()) {} //nothing
-                else if (type <= 3400 && !mirrorEnabled) mirrorTotally();
+                if (type <= 2500 && exchangeRowRandomly()) return; // nothing
+                if (type <= 3400 && !mirrorEnabled) mirrorTotally();
                 else if (type <= 4300) mirrorPartially();
                 else if (type <= 5200) insertBarrier();
                 else if (type <= 5300) minusScore(128);
                 else if (type <= 5500 && shuffleBlocks()) {}
                 else if (type <= 5750) sinkElevation();
-                else if (type <= 7750 || score >= 1000) changeSpeedRandomly();  //防止刷分！！！！！
+                else if (type <= 7750 || score >= 1000) changeSpeedRandomly();  // 防止刷分！！！！！
                 else toErase = true;
                 if (!toErase) return;
             }else if(currentGameMode.mode == MODE_HD.mode){
@@ -381,10 +391,10 @@ void checkDarkenLevel(bool *ended) {
                 }
             }
             if (!eraseBlockRandomly()) {
-                score += beyondEnabled ? 25 : 100; //能消完也是个神仙了
-                AwaitSettingTextInPosition(5, 7, COLOR_SUB_TEXT);
+                score += beyondEnabled ? 25 : 100; // 能消完也是个神仙了
+                prepareTextPlacing(5, 7, COLOR_SUB_TEXT);
                 printScore(score);
             }
         }
-    } else trialMove++; //继续累计
+    } else trialMove++; // 继续累计
 }

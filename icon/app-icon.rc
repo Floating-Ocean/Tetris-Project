@@ -21,7 +21,7 @@ VS_VERSION_INFO VERSIONINFO
                 VALUE "FileDescription", "Tetris Project\0"
                 VALUE "FileVersion", "2.4.1\0"
                 VALUE "ProductVersion", "2.4.1\0"
-                VALUE "LegalCopyright", "Copyright (c) 2022-2024 Floating Ocean. All Rights Reserved.\0"
+                VALUE "LegalCopyright", "Copyright (c) 2022-2025 Floating Ocean. All Rights Reserved.\0"
                 VALUE "LegalTrademarks", "Floating Ocean\0"
                 VALUE "OriginalFilename", "Tetris\0"
                 VALUE "ProductName", "Tetris Project\0"

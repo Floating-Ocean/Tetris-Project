@@ -86,7 +86,7 @@ extern bool moveBlock(int direction, bool *ended);
 
 extern bool rotateBlock(bool *ended);
 
-extern void extractNextBlock();
+extern void extractNextBlock(bool showNext);
 
 extern bool appearBlock();
 
@@ -135,25 +135,31 @@ extern void printScore(int showScore);
 extern void initializeScore();
 
 //控制台 util/Console.c
-extern void HideCursor();
+extern void hideCursor();
 
-extern void MoveCursor(int x, int y);
+extern void moveCursor(int x, int y);
 
-extern void AwaitSettingTextInPosition(int x, int y, int color);
+extern void prepareTextPlacing(int x, int y, int color);
 
-extern void SetTextInPosition(const char *text, int x, int y, int color);
+extern void placeText(const char *text, int x, int y, int color);
 
-extern bool initializeFont();
+extern bool initConsoleFont();
 
-extern void initializeColor();
+extern void initConsoleColor();
 
-extern void DisableFeatures();
+extern void disableConsoleFeatures();
 
-extern void PlaceWindowCentral();
+extern void centralizeWindow();
 
-extern void refreshTitleState(const char *state);
+extern void resizeWindow(int x, int y);
 
-extern bool initializeConsole();
+extern void lockConsoleWindow();
+
+extern void clearConsole();
+
+extern void changeSubtitle(const char *subtitle);
+
+extern bool initConsole();
 
 //文件操作 util/File.c
 extern void checkFolder();
@@ -172,7 +178,7 @@ extern void showGreetings();
 extern void startGame();
 
 //属性 interface/Property.c
-extern void printOne(int index, int textColor, int borderColor, const char **text);
+extern void changeDifficultySection(int index, int textColor, int borderColor, const char **text);
 
 extern void showCurrentMode(const char **text, GameMode mode, int color);
 

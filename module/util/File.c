@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 #include "../../collect/Collection.h"
 
-//1.11改用Windows API，存入%localappdata%/Floating Ocean/Tetris/内
+// 1.11 改用 Windows API，存入 "%localappdata%/Floating Ocean/Tetris/" 内
 
 /**
  * 检查存储文件夹的父文件夹是否存在，不存在则创建
@@ -26,7 +26,7 @@ void checkMainFolder() {
     sprintf(dirName, "%s\\Floating Ocean", getenv("localappdata"));
     const DWORD fileAttribute = GetFileAttributesA(dirName);
     if (fileAttribute == INVALID_FILE_ATTRIBUTES || !(fileAttribute & FILE_ATTRIBUTE_DIRECTORY))
-        CreateDirectory(dirName, NULL);
+        CreateDirectory(dirName, nullptr);
 }
 
 /**
@@ -38,7 +38,7 @@ void checkFolder() {
     sprintf(dirName, "%s\\Floating Ocean\\Tetris", getenv("localappdata"));
     const DWORD fileAttribute = GetFileAttributesA(dirName);
     if (fileAttribute == INVALID_FILE_ATTRIBUTES || !(fileAttribute & FILE_ATTRIBUTE_DIRECTORY))
-        CreateDirectory(dirName, NULL);
+        CreateDirectory(dirName, nullptr);
 }
 
 /**
@@ -54,7 +54,7 @@ const char *getFileName() {
 /**
  * 读取数据
  * @param container [container]
- * @param key key=
+ * @param key key =
  * @return 数据
  */
 int queryDB(const char *container, const char *key) {
@@ -65,7 +65,7 @@ int queryDB(const char *container, const char *key) {
 /**
  * 写入数据
  * @param container [container]
- * @param key key=
+ * @param key key =
  * @param data 内容
  */
 void insertDB(const char *container, const char *key, const int data) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 #include "../../collect/Collection.h"
 
 /**
- * Timer线程
+ * Timer 线程
  * @param args
  * @return 是否有键盘事件
  */
@@ -25,25 +25,26 @@ void *timeThread(void *args) {
     if (timer.currentTimeMills - timer.previousTimeMills >= currentGameMode.speed * speedMultiply) {
         timer.previousTimeMills = GetTickCount();
         timer.currentTimeMills = timer.previousTimeMills;
-    } else { //处理上一次剩下的时间
+    } else { // 处理上一次剩下的时间
         const DWORD delta = timer.currentTimeMills - timer.previousTimeMills;
         timer.currentTimeMills = GetTickCount();
         timer.previousTimeMills = timer.currentTimeMills - delta;
     }
     while (true) {
-        //beyond加速模式持续18秒，其余变速持续9秒
+        // beyond 加速模式持续 18 秒，其余变速持续 9 秒
         if (speedMultiply != 1.0 && GetTickCount() - speedMultiplyEnabledTime >= (beyondEnabled && speedMultiply > 1 ? 18000 : 9000)) {
             speedMultiply = 1.0; //恢复Speed
             if (enablePreview) refreshPreview();
         }
         if (timer.currentTimeMills - timer.previousTimeMills >= currentGameMode.speed * speedMultiply) {
-            pthread_exit("true"); //无键盘事件，可以下落
+            pthread_exit("true"); // 无键盘事件，可以下落
             break;
         }
         timer.currentTimeMills = GetTickCount();
         if (whenBreakTimer()) {
-            pthread_exit("false"); //有键盘事件，打断
+            pthread_exit("false"); // 有键盘事件，打断
             break;
         }
     }
+    return nullptr;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 #include "collect/Collection.h"
 
-//-----版本控制-----
-const char *versionName = "2.4.1";
-const char *versionNameFull = "2.4.1.240124";
+// ------ 版本控制 ------
+const char *versionName = "2.4.2";
+const char *versionNameFull = "2.4.2.250315";
 
-//-----常量区-----
+// ------ 常量区 ------
 const int DIRECTION_LEFT = -1, DIRECTION_RIGHT = 1, DIRECTION_DOWN = 0;
 
-//-----全局变量区-----
+// ------ 全局变量区 ------
 int N = 24;
 Fall nowFalling;
 Block blocks[7];
@@ -45,31 +45,32 @@ char **inputArgument;
  */
 int main(const int argc, char **argv) {
     inputArgument = argv;
-    if (!checkEnvironment(argc)) return 0;
-    if (!initializeConsole()) return 0;
+    if (!checkEnvironment(argc)) return 1;
+    if (!initConsole()) return 1;
     initializeBlock();
     showStartPage();
+    return 0;
 }
 
 /**
- * 检查是否从conhost打开，处理拖拽进入的主题文件的导入
+ * 检查是否从 conhost 打开，处理拖拽进入的主题文件的导入
  * @param argumentCount 命令行参数数量
  * @return 是否继续游戏
  */
 bool checkEnvironment(const int argumentCount) {
-    //强行从conhost打开,Windows Terminal的可玩度太低了
+    // 强行从 conhost 打开, Windows Terminal 的可玩度太低了
     SetConsoleOutputCP(65001);
     if (argumentCount != 2 || strcmp(inputArgument[1], "/openConhost") != 0) {
         if (argumentCount == 2) {
-            if (importCustomTheme(inputArgument[1])) //检测到拖入文件，设置主题
+            if (importCustomTheme(inputArgument[1])) // 检测到拖入文件，设置主题
                 printf("\n\n\n  主题导入成功，可在下次打开游戏时切换.");
             system("pause > nul");
             return false;
         }
         system("title Tetris Loader");
         printf("\n  Please Wait . . .");
-        if (!checkFont()) { //检查字体依赖
-            system("cls");
+        if (!checkFont()) { // 检查字体依赖
+            clearConsole();
             printf("\n  未在你的设备上找到字体：Sarasa Mono SC\n\n  你可以转到下面的网址下载该字体并重启应用。\n\n  https://github.com/Floating-Ocean/Tetris-Project\n\n  https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/Sarasa Gothic version 0.37.4/\n\n  谢谢.");
             system("pause > nul");
             return false;
@@ -87,20 +88,26 @@ bool checkEnvironment(const int argumentCount) {
 /**
  * 显示最初的开始页
  */
-void showStartPage() {
-    system("cls & mode con cols=50 lines=34");
-    PlaceWindowCentral();
-    refreshTitleState("");
-    printf("\n\n\n\n           俄罗斯方块 - Tetris Project\n\n\n"
-           "           古 典 游 戏     创 新 玩 法\n\n\n\n\n\n\n\n\n"
-           "               点 按 任 意 键 继 续\n\n\n\n\n\n\n\n"
-           "               Version %s\n\n\n\n"
-           "        Copyright ©2022-2024 Floating Ocean.\n"
+void showStartPage() { // NOLINT(*-no-recursion)
+    clearConsole();
+    resizeWindow(50, 34);
+    centralizeWindow();
+    changeSubtitle("");
+    printf("\n\n\n\n"
+           "           俄罗斯方块 - Tetris Project"
+           "\n\n\n"
+           "           古 典 游 戏     创 新 玩 法"
+           "\n\n\n\n\n\n\n\n\n"
+           "               点 按 任 意 键 继 续"
+           "\n\n\n\n\n\n\n\n"
+           "               Version %s"
+           "\n\n\n\n"
+           "        Copyright ©2022-2025 Floating Ocean.\n"
            "                All Rights Reserved.", versionNameFull);
-    while (true) {//等待切换主题重开
+    while (true) { // 等待切换主题重开
         if (kbhit()) {
             const int input = getch();
-            if (input == 84 || input == 116) { //T键切换主题
+            if (input == 84 || input == 116) { // T 键切换主题
                 const int themeRange = queryDB("TetrisSetting", "ImportedTheme") ? 2 : 1,
                         oldTheme = queryDB("TetrisSetting", "ThemeType"),
                         newTheme = oldTheme + 1 > themeRange ? 0 : oldTheme + 1;
@@ -111,7 +118,7 @@ void showStartPage() {
                 system(command);
                 return;
             }
-            if (input == 27) return; //按esc退出游戏
+            if (input == 27) return; // 按 esc 退出游戏
             break;
         }
     }
@@ -121,10 +128,11 @@ void showStartPage() {
 /**
  * 显示欢迎页
  */
-void showWelcomePage() {
-    system("cls & mode con cols=75 lines=28");
-    PlaceWindowCentral();
-    refreshTitleState("Welcome");
+void showWelcomePage() { // NOLINT(*-no-recursion)
+    clearConsole();
+    resizeWindow(75, 28);
+    centralizeWindow();
+    changeSubtitle("Welcome");
     char greeting[50], userName[MAX_PATH];
     getCurrentGreeting(greeting);
     DWORD size = MAX_PATH;
@@ -139,18 +147,18 @@ void showWelcomePage() {
            "    5.在传统俄罗斯方块游戏中能做到的，这里应该都可以做到.\n\n"
            "    更多游戏介绍请移步 floating-ocean.github.io/tetrisproj/ \n\n\n"
            "    点按键盘任意键继续.\n\n\n\n"
-           "    ©2022-2024 Floating Ocean.\n"
+           "    ©2022-2025 Floating Ocean.\n"
            "    All Rights Reserved.", greeting, userName);
-    while (true) { //等待按esc或继续游戏
+    while (true) { // 等待按 esc 或继续游戏
         if (kbhit()) {
             const int input = getch();
             if (input == 27) {
                 showStartPage();
-                return; //按esc返回开始页
+                return; // 按 esc 返回开始页
             }
             break;
         }
     }
-    system("cls");
+    clearConsole();
     startGame();
 }

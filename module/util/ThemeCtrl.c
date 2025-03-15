@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
  * @param file 文件路径
  */
 bool importCustomTheme(const char *file) {
-    //step1. 检查文件后缀
+    // Step1. 检查文件后缀
     int startIndex = 0;
     for (int i = 0; file[i] != '\0'; i++) if (file[i] == '\\') startIndex = i;
     for (int i = startIndex; file[i] != '\0'; i++) if (file[i] == '.') startIndex = i;
@@ -29,13 +29,13 @@ bool importCustomTheme(const char *file) {
         printf("\n  主题文件格式错误.");
         return false;
     }
-    //step2.读文件
-    //文件信息
+    // Step2.读文件
+    // 文件信息
     char title[50], description[250], publisher[100];
     GetPrivateProfileString("ThemeIntro", "Title", "No Title", title, sizeof title, file);
     GetPrivateProfileString("ThemeIntro", "Description", "No Description.", description, sizeof description, file);
     GetPrivateProfileString("ThemeIntro", "Publisher", "©? Nameless", publisher, sizeof publisher, file);
-    //主题配置
+    // 主题配置
     const char *tags[14] = {
         "BackgroundColor", "ForegroundStrongColor", "ForegroundModestColor",
         "ForegroundMildColor", "PassColor", "WarningColor", "FaultColor", "BlockColor_0", "BlockColor_1",
@@ -50,11 +50,11 @@ bool importCustomTheme(const char *file) {
     }
     printf("\n  Hey, 你正在导入主题!\n\n\n  来确认一下主题的信息吧~\n\n\n  %s\n\n  %s\n\n  Published by %s\n\n\n  任意键即可导入.\n\n  若你不需要此主题，请按下键盘的Esc键以取消.",
            title, description, publisher);
-    while (true) //等待按esc或继续
+    while (true) // 等待按 esc 或继续
         if (kbhit()) {
             const int input = getch();
             if (input == 27) {
-                return false; //按esc返回开始页
+                return false; // 按 esc 返回开始页
             }
             break;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,29 @@
 #include "../../collect/Collection.h"
 
 /**
- * 格式化score的输出(前置空格)
+ * 格式化 score 的输出 (前置空格)
  * @param showScore 分数
  */
 void printScore(const int showScore) {
-    if (showScore < 10) printf("      %d 分  ", showScore);
-    else if (showScore < 100) printf("     %d 分   ", showScore);
-    else printf("     %d 分  ", showScore);
+    if (showScore < 10) printf("     %d 分  ", showScore);
+    else if (showScore < 100) printf("    %d 分   ", showScore);
+    else printf("    %d 分  ", showScore);
 }
 
 /**
- * 初始化游戏分数系统&ui
+ * 初始化游戏分数系统 & ui
  */
 void initializeScore() {
-    SetTextInPosition("    当前分数   ", 5, 5, COLOR_MAIN_TEXT);
+    placeText("   当前分数   ", 6, 5, COLOR_MAIN_TEXT);
     score = 0;
-    AwaitSettingTextInPosition(5, 7, COLOR_SUB_TEXT);
+    prepareTextPlacing(6, 7, COLOR_SUB_TEXT);
     printScore(score);
-    SetTextInPosition("    历史最高   ", 5, 11, COLOR_MAIN_TEXT);
-    AwaitSettingTextInPosition(5, 13, COLOR_SUB_TEXT);
+    placeText("   历史最高   ", 6, 11, COLOR_MAIN_TEXT);
+    prepareTextPlacing(6, 13, COLOR_SUB_TEXT);
     printScore(challengeModeEnabled ? queryDB("TetrisData", "ChallengeBestRecord") :
                queryDB("TetrisData", "BestRecord"));
     const bool tmp = beyondEnabled;
     beyondEnabled = false;
-    animateDarkenRecover(N, COLOR_MAIN_TEXT); //刷新Darken值的ui显示
+    animateDarkenRecover(N, COLOR_MAIN_TEXT); // 刷新 Darken 值的 ui 显示
     beyondEnabled = tmp;
 }

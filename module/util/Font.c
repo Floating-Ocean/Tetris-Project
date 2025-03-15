@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 #include "../../collect/Collection.h"
 
-int CALLBACK EnumFontsProc(LOGFONT *lplf, TEXTMETRIC *lptm, DWORD dwType, LPARAM lpData) {
+int CALLBACK EnumFontsProc(LOGFONT *lpLf, TEXTMETRIC *lpTm, DWORD dwType, LPARAM lpData) {
     return 10;
 }
 
 bool checkFont() {
-    LPARAM lp;
-    return EnumFonts(GetDC(GetActiveWindow()), "Sarasa Mono SC", EnumFontsProc, lp) == 10;
+    return EnumFonts(GetDC(GetActiveWindow()), "Sarasa Mono SC", EnumFontsProc, 0) == 10;
 }

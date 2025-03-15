@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Floating Ocean
+ * Copyright (C) 2022-2025 Floating Ocean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,15 @@
  * @param typeSize 类型的大小 sizeof
  */
 void swap(void *a, void *b, const size_t typeSize) {
-    char *tmp = malloc(typeSize);
+    unsigned char tmp[typeSize]; // 无动态内存分配，防止内存泄漏
     memcpy(tmp, a, typeSize);
     memcpy(a, b, typeSize);
     memcpy(b, tmp, typeSize);
 }
 
 /**
- * 随机化并不强的int数组随机化
- * @param array int数组
+ * 随机化并不强的 int 数组随机化
+ * @param array int 数组
  * @param n 数组大小
  */
 void shuffleIntArray(int *array, const int n) {
@@ -63,7 +63,6 @@ void getCurrentGreeting(char *greet) {
     else if (hour == 12) index = 1;
     else if (hour >= 13 && hour <= 16) index = 2;
     else if (hour >= 17 && hour <= 23) index = 3;
-    srand(time(NULL)); //初始化随机数种子
     strcpy(greet, greets[index][randBetween(0, 4)]);
 }
 
@@ -81,12 +80,12 @@ int hexToDec(const char hex) {
 }
 
 /**
- * 将hex颜色转换为rgb表达式
- * @param hex 形如0xffffff和#ffffff的颜色
- * @return rgb色值
+ * 将 hex 颜色转换为 rgb 表达式
+ * @param hex 形如 0xffffff 和 #ffffff 的颜色
+ * @return rgb 色值
  */
 COLORREF hexToRGB(const char *hex) {
-    const int size = strlen(hex) == 7 ? 7 : 8; //支持0xffffff和#ffffff
+    const int size = strlen(hex) == 7 ? 7 : 8; //支持 0xffffff 和 #ffffff
     return RGB(hexToDec(hex[size - 6]) * 16 + hexToDec(hex[size - 5]),
                hexToDec(hex[size - 4]) * 16 + hexToDec(hex[size - 3]),
                hexToDec(hex[size - 2]) * 16 + hexToDec(hex[size - 1]));
