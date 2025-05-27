@@ -1,5 +1,6 @@
-<h1 align="center">Tetris-Project</h1>
 <div align="center">
+  <img src="/img/icon.png" alt=""/> 
+  <h1 align="center">Tetris-Project</h1>
   <strong>C语言课程设计 · 基于C语言的传统俄罗斯方块游戏拓展</strong><br>
 </div><br>
 
@@ -35,6 +36,14 @@
 
 [**>> 查看更多游戏介绍**](https://floating-ocean.github.io/tetrisproj/)
 
+<details open>
+<summary><h3>游戏截图</h3></summary>
+  <img src="/img/display_normal.png" alt="游戏截图" width="49%"/>
+  <img src="/img/display_punishment.png" alt="游戏惩罚截图" width="49%"/>
+  <br><br>
+  <p>左图为正常IN难度，右图触发了"反转重力"惩罚。</p>
+</details>
+
 ## 下载
 
 前往 [**本仓库的发行页**](https://github.com/Floating-Ocean/Tetris-Project/releases/latest/) 获取游戏的最新版。
@@ -44,5 +53,11 @@
 ## 主题
 
 游戏支持自定义主题，你可以在发行页下载官方主题并按照文件内的提示安装它。
+
+<details open>
+<summary><h3>主题示例</h3></summary>
+  <img src="/img/display_theme_chocolate.png" alt="巧克力主题" width="49%"/>
+  <img src="/img/display_theme_cyber.png" alt="科幻主题" width="49%"/>
+</details>
 
 <p><small><br><br>玩得愉快!<br><br>Best Regards,<br>Floating Ocean.</small></p>
